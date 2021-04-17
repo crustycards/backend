@@ -1,7 +1,7 @@
 mod hardcoded_data;
-use shared::resource_name::DefaultCardpackName;
-use shared::proto::{DefaultBlackCard, DefaultCardpack, DefaultWhiteCard};
 use sha2::{Digest, Sha256};
+use shared::proto::{DefaultBlackCard, DefaultCardpack, DefaultWhiteCard};
+use shared::resource_name::DefaultCardpackName;
 use std::collections::HashMap;
 use std::sync::Arc;
 

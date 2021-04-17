@@ -1,10 +1,10 @@
+use rand::seq::SliceRandom;
+use rand::thread_rng;
 use shared::proto::{
     game_config::{blank_white_card_config::BlankWhiteCardsAdded, BlankWhiteCardConfig},
     playable_white_card::Card,
     BlankWhiteCard, CustomWhiteCard, DefaultWhiteCard, PlayableWhiteCard,
 };
-use rand::seq::SliceRandom;
-use rand::thread_rng;
 use uuid::Uuid;
 
 pub struct WhiteCardDeck {

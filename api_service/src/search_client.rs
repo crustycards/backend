@@ -1,7 +1,7 @@
 use super::environment::EnvironmentVariables;
-use shared::resource_name::{ParseNameError, UserName};
-use shared::proto::User;
 use mockall::automock;
+use shared::proto::User;
+use shared::resource_name::{ParseNameError, UserName};
 use sonic_channel::*;
 
 #[automock]

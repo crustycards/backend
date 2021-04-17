@@ -1,7 +1,7 @@
 use super::super::mongo::user_collection::UserCollection;
 use super::super::search_client::{IndexUserError, SearchClient};
-use shared::proto::admin_service_server::AdminService;
 use futures_lite::StreamExt;
+use shared::proto::admin_service_server::AdminService;
 use std::sync::Arc;
 use tonic::{Request, Response, Status};
 

@@ -1,16 +1,15 @@
+use super::basic_validation::{BoundedNumberField, ValidatedStringField};
+use super::constants::*;
+use super::grpc_error::empty_request_field_error;
 use super::proto::{
     game_config::{
         blank_white_card_config::{Behavior, BlankWhiteCardsAdded},
         BlankWhiteCardConfig, EndCondition,
     },
-    GameConfig,
     user_settings::ColorScheme,
-    OAuthCredentials,
+    GameConfig, OAuthCredentials,
 };
-use super::constants::*;
 use tonic::Status;
-use super::grpc_error::empty_request_field_error;
-use super::basic_validation::{BoundedNumberField, ValidatedStringField};
 
 pub struct ValidatedOAuthCredentials {
     oauth_credentials: OAuthCredentials,

@@ -1,15 +1,15 @@
 mod amqp;
 mod environment;
 mod game;
-mod service;
 mod helper;
+mod service;
 
 use amqp::MessageQueue;
+use service::api_resource_fetcher::GrpcApiResourceFetcher;
+use service::game_service_impl::GameServiceImpl;
 use shared::proto::cardpack_service_client::CardpackServiceClient;
 use shared::proto::game_service_server::GameServiceServer;
 use shared::proto::user_service_client::UserServiceClient;
-use service::api_resource_fetcher::GrpcApiResourceFetcher;
-use service::game_service_impl::GameServiceImpl;
 use tonic::transport::Server;
 
 #[tokio::main]

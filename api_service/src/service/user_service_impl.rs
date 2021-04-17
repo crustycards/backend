@@ -1,14 +1,14 @@
 use super::super::mongo::user_collection::UserCollection;
-use shared::resource_name::*;
-use shared::basic_validation::ValidatedStringField;
-use shared::proto_validation::{
-    OptionalField, ValidatedColorScheme, ValidatedGameConfig, ValidatedOAuthCredentials,
-};
 use super::super::search_client::SearchClient;
 use super::helper::*;
 use super::profile_image_handler::ProfileImageHandler;
+use shared::basic_validation::ValidatedStringField;
 use shared::proto::user_service_server::UserService;
 use shared::proto::*;
+use shared::proto_validation::{
+    OptionalField, ValidatedColorScheme, ValidatedGameConfig, ValidatedOAuthCredentials,
+};
+use shared::resource_name::*;
 use std::collections::HashSet;
 use std::iter::FromIterator;
 use std::sync::Arc;

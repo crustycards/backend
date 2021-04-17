@@ -1,12 +1,12 @@
-use crate::amqp::MessageQueue;
+use super::super::game::game::Game;
 use super::super::game::game_indexer::GameIndexer;
+use super::super::game::player_id::PlayerId;
+use super::api_resource_fetcher::ApiResourceFetcher;
+use crate::amqp::MessageQueue;
+use clokwerk::{Interval, ScheduleHandle, Scheduler};
 use shared::grpc_error::{
     empty_request_field_error, missing_request_field_error, negative_request_field_error,
 };
-use shared::proto_validation::ValidatedGameConfig;
-use super::api_resource_fetcher::ApiResourceFetcher;
-use super::super::game::game::Game;
-use super::super::game::player_id::PlayerId;
 use shared::proto::{
     game_service_server::GameService, search_games_request::GameStageFilter,
     AddArtificialPlayerRequest, BanUserRequest, CreateChatMessageRequest, CreateGameRequest,
@@ -16,7 +16,7 @@ use shared::proto::{
     StopGameRequest, UnbanUserRequest, UnplayCardsRequest, VoteCardRequest,
     VoteStartNextRoundRequest,
 };
-use clokwerk::{Interval, ScheduleHandle, Scheduler};
+use shared::proto_validation::ValidatedGameConfig;
 use std::sync::Arc;
 use std::sync::Mutex;
 use std::time::Duration;

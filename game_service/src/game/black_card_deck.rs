@@ -1,8 +1,8 @@
+use rand::seq::SliceRandom;
+use rand::thread_rng;
 use shared::proto::{
     black_card_in_round::Card, BlackCardInRound, CustomBlackCard, DefaultBlackCard,
 };
-use rand::seq::SliceRandom;
-use rand::thread_rng;
 use tonic::Status;
 
 pub struct BlackCardDeck {

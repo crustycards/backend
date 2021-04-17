@@ -12,14 +12,15 @@ pub enum ParseNameError {
 impl ParseNameError {
     pub fn to_status(self) -> Status {
         match self {
-            ParseNameError::PathDoesNotMatchFormat(format, path) => Status::invalid_argument(format!(
-                "Resource with name `{}` should adhere to format `{}`.",
-                path, format
-            )),
-            ParseNameError::IncorrectNumberOfTokenFields(path) => Status::invalid_argument(format!(
-                "Incorrect number of token fields in path `{}`.",
-                path
-            )),
+            ParseNameError::PathDoesNotMatchFormat(format, path) => {
+                Status::invalid_argument(format!(
+                    "Resource with name `{}` should adhere to format `{}`.",
+                    path, format
+                ))
+            }
+            ParseNameError::IncorrectNumberOfTokenFields(path) => Status::invalid_argument(
+                format!("Incorrect number of token fields in path `{}`.", path),
+            ),
             ParseNameError::ObjectIdParseError(path) => {
                 Status::not_found(format!("Resource with name `{}` does not exist.", path))
             }
