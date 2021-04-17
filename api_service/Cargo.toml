@@ -1,0 +1,6 @@
+[package]
+name = "api_service"
+authors = ["Tommy Volk <tvolk131@gmail.com>"]
+edition = "2018"
+
+[dependencies]
