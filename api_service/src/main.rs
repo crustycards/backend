@@ -1,16 +1,22 @@
-use custom_black_card_collection::MongoCustomBlackCardCollection;
-use custom_cardpack_collection::MongoCustomCardpackCollection;
-use custom_white_card_collection::MongoCustomWhiteCardCollection;
-use helper::get_mongo_database_or_panic;
-use user_collection::MongoUserCollection;
-use cards_proto::admin_service_server::AdminServiceServer;
-use cards_proto::cardpack_service_server::CardpackServiceServer;
-use cards_proto::user_service_server::UserServiceServer;
+mod mongo;
+mod environment;
+mod search_client;
+mod service;
+mod proto_helper;
+
+use mongo::custom_black_card_collection::MongoCustomBlackCardCollection;
+use mongo::custom_cardpack_collection::MongoCustomCardpackCollection;
+use mongo::custom_white_card_collection::MongoCustomWhiteCardCollection;
+use mongo::helper::get_mongo_database_or_panic;
+use mongo::user_collection::MongoUserCollection;
+use shared::proto::admin_service_server::AdminServiceServer;
+use shared::proto::cardpack_service_server::CardpackServiceServer;
+use shared::proto::user_service_server::UserServiceServer;
 use search_client::SonicSearchClient;
-use admin_service_impl::AdminServiceImpl;
-use cardpack_service_impl::CardpackServiceImpl;
-use default_cardpacks::DefaultCardpackHandler;
-use user_service_impl::UserServiceImpl;
+use service::admin_service_impl::AdminServiceImpl;
+use service::cardpack_service_impl::CardpackServiceImpl;
+use service::default_cardpacks::DefaultCardpackHandler;
+use service::user_service_impl::UserServiceImpl;
 use std::sync::Arc;
 use tonic::transport::Server;
 

@@ -1,4 +1,4 @@
-use cards_proto::{
+use shared::proto::{
     black_card_in_round::Card, playable_white_card::Card as PlayableCard, BlackCardInRound,
     PlayableWhiteCard,
 };

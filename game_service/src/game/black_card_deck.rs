@@ -1,6 +1,4 @@
-extern crate rand;
-
-use cards_proto::{
+use shared::proto::{
     black_card_in_round::Card, BlackCardInRound, CustomBlackCard, DefaultBlackCard,
 };
 use rand::seq::SliceRandom;

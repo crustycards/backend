@@ -1,4 +1,4 @@
-use cards_proto::{
+use super::proto::{
     game_config::{
         blank_white_card_config::{Behavior, BlankWhiteCardsAdded},
         BlankWhiteCardConfig, EndCondition,
@@ -7,10 +7,10 @@ use cards_proto::{
     user_settings::ColorScheme,
     OAuthCredentials,
 };
-use constants::*;
+use super::constants::*;
 use tonic::Status;
-use grpc_error::empty_request_field_error;
-use basic_validation::{BoundedNumberField, ValidatedStringField};
+use super::grpc_error::empty_request_field_error;
+use super::basic_validation::{BoundedNumberField, ValidatedStringField};
 
 pub struct ValidatedOAuthCredentials {
     oauth_credentials: OAuthCredentials,

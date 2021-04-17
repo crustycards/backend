@@ -1,12 +1,12 @@
-use resource_name::{CustomCardpackName, UserName, UserSettingsName};
-use time::chrono_timestamp_to_timestamp_proto;
-use basic_validation::ValidatedStringField;
-use proto_validation::{BoundedPageSize, OptionalField, ValidatedColorScheme, ValidatedGameConfig, ValidatedOAuthCredentials};
-use helper::*;
-use cards_proto::game_config::{
+use shared::resource_name::{CustomCardpackName, UserName, UserSettingsName};
+use shared::time::chrono_timestamp_to_timestamp_proto;
+use shared::basic_validation::ValidatedStringField;
+use shared::proto_validation::{BoundedPageSize, OptionalField, ValidatedColorScheme, ValidatedGameConfig, ValidatedOAuthCredentials};
+use super::helper::*;
+use shared::proto::game_config::{
     blank_white_card_config::BlankWhiteCardsAdded, BlankWhiteCardConfig, EndCondition,
 };
-use cards_proto::*;
+use shared::proto::*;
 use bson::{doc, document::ValueAccessError, Bson, Document};
 use futures_lite::{Stream, StreamExt};
 use mockall::automock;

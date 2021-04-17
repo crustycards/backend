@@ -1,9 +1,9 @@
-use resource_name::{CustomBlackCardName, CustomCardpackName};
-use basic_validation::ValidatedStringField;
-use proto_validation::{AnswerFieldCount, BoundedPageSize};
-use time::{chrono_timestamp_to_timestamp_proto, object_id_to_timestamp_proto};
-use helper::*;
-use cards_proto::*;
+use shared::resource_name::{CustomBlackCardName, CustomCardpackName};
+use shared::basic_validation::ValidatedStringField;
+use shared::proto_validation::{AnswerFieldCount, BoundedPageSize};
+use shared::time::{chrono_timestamp_to_timestamp_proto, object_id_to_timestamp_proto};
+use super::helper::*;
+use shared::proto::*;
 use bson::oid::ObjectId;
 use bson::{doc, Document};
 use mockall::automock;

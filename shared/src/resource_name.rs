@@ -1,4 +1,4 @@
-use basic_validation::ValidatedStringField;
+use super::basic_validation::ValidatedStringField;
 use bson::oid::ObjectId;
 use tonic::Status;
 

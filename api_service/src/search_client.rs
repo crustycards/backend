@@ -1,6 +1,6 @@
-use environment::EnvironmentVariables;
-use resource_name::{ParseNameError, UserName};
-use cards_proto::User;
+use super::environment::EnvironmentVariables;
+use shared::resource_name::{ParseNameError, UserName};
+use shared::proto::User;
 use mockall::automock;
 use sonic_channel::*;
 

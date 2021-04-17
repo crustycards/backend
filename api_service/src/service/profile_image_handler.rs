@@ -1,5 +1,5 @@
-use resource_name::*;
-use cards_proto::UserProfileImage;
+use shared::resource_name::*;
+use shared::proto::UserProfileImage;
 use dashmap::DashMap;
 
 // TODO - Rather than storing profile images locally, let's connect this to an Amazon S3 instance.

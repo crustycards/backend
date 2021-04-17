@@ -1,4 +1,4 @@
-use proto_validation::BoundedPageSize;
+use shared::proto_validation::BoundedPageSize;
 use bson::doc;
 use bson::oid::ObjectId;
 use bson::Document;
@@ -6,7 +6,7 @@ use mongodb::{options::FindOptions, Client, Collection, Database};
 use std::marker::{Send, Sync};
 use tokio_stream::StreamExt;
 use tonic::Status;
-use environment::EnvironmentVariables;
+use super::super::environment::EnvironmentVariables;
 
 pub async fn get_mongo_database_or_panic(env_vars: &EnvironmentVariables) -> Database {
     let mongo_client = match Client::with_uri_str(env_vars.get_mongo_uri()).await {

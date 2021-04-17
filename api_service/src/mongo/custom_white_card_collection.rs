@@ -1,9 +1,9 @@
-use resource_name::{CustomCardpackName, CustomWhiteCardName};
-use time::{object_id_to_timestamp_proto, chrono_timestamp_to_timestamp_proto};
-use basic_validation::ValidatedStringField;
-use proto_validation::BoundedPageSize;
-use helper::*;
-use cards_proto::*;
+use shared::resource_name::{CustomCardpackName, CustomWhiteCardName};
+use shared::time::{object_id_to_timestamp_proto, chrono_timestamp_to_timestamp_proto};
+use shared::basic_validation::ValidatedStringField;
+use shared::proto_validation::BoundedPageSize;
+use super::helper::*;
+use shared::proto::*;
 use bson::oid::ObjectId;
 use bson::{doc, Document};
 use mockall::automock;

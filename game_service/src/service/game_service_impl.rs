@@ -1,15 +1,13 @@
-extern crate uuid;
-
-use amqp::MessageQueue;
-use game_indexer::GameIndexer;
-use grpc_error::{
+use crate::amqp::MessageQueue;
+use super::super::game::game_indexer::GameIndexer;
+use shared::grpc_error::{
     empty_request_field_error, missing_request_field_error, negative_request_field_error,
 };
-use proto_validation::ValidatedGameConfig;
-use api_resource_fetcher::ApiResourceFetcher;
-use game::Game;
-use player_id::PlayerId;
-use cards_proto::{
+use shared::proto_validation::ValidatedGameConfig;
+use super::api_resource_fetcher::ApiResourceFetcher;
+use super::super::game::game::Game;
+use super::super::game::player_id::PlayerId;
+use shared::proto::{
     game_service_server::GameService, search_games_request::GameStageFilter,
     AddArtificialPlayerRequest, BanUserRequest, CreateChatMessageRequest, CreateGameRequest,
     GameInfo, GameView, GetGameViewRequest, JoinGameRequest, KickUserRequest, LeaveGameRequest,

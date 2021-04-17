@@ -1,14 +1,14 @@
-use user_collection::UserCollection;
-use resource_name::*;
-use basic_validation::ValidatedStringField;
-use proto_validation::{
+use super::super::mongo::user_collection::UserCollection;
+use shared::resource_name::*;
+use shared::basic_validation::ValidatedStringField;
+use shared::proto_validation::{
     OptionalField, ValidatedColorScheme, ValidatedGameConfig, ValidatedOAuthCredentials,
 };
-use search_client::SearchClient;
-use helper::*;
-use profile_image_handler::ProfileImageHandler;
-use cards_proto::user_service_server::UserService;
-use cards_proto::*;
+use super::super::search_client::SearchClient;
+use super::helper::*;
+use super::profile_image_handler::ProfileImageHandler;
+use shared::proto::user_service_server::UserService;
+use shared::proto::*;
 use std::collections::HashSet;
 use std::iter::FromIterator;
 use std::sync::Arc;

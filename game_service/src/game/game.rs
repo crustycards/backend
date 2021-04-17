@@ -1,15 +1,14 @@
-extern crate uuid;
-use proto_validation::ValidatedGameConfig;
-use time::{get_current_timestamp_proto, system_time_to_timestamp_proto};
-use constants::*;
-use black_card_deck::BlackCardDeck;
-use chat_message_handler::ChatMessageHandler;
-use player_id::PlayerId;
-use player_manager::PlayerManager;
-use text_query_handler::TextQueryHandler;
-use white_card_deck::WhiteCardDeck;
-use white_card_gameplay_manager::WhiteCardGameplayManager;
-use cards_proto::{
+use shared::proto_validation::ValidatedGameConfig;
+use shared::time::{get_current_timestamp_proto, system_time_to_timestamp_proto};
+use shared::constants::*;
+use super::black_card_deck::BlackCardDeck;
+use super::chat_message_handler::ChatMessageHandler;
+use super::player_id::PlayerId;
+use super::player_manager::PlayerManager;
+use super::text_query_handler::TextQueryHandler;
+use super::white_card_deck::WhiteCardDeck;
+use super::white_card_gameplay_manager::WhiteCardGameplayManager;
+use shared::proto::{
     game_config::EndCondition, game_view::Stage, playable_white_card::Card, player::Identifier,
     ArtificialUser, ChatMessage, CustomBlackCard, CustomWhiteCard, DefaultBlackCard,
     DefaultWhiteCard, GameInfo, GameView, PastRound, PlayableWhiteCard, Player, User,
@@ -831,7 +830,7 @@ mod tests {
         get_valid_endless_test_game_config, get_valid_test_game_config,
     };
     use super::*;
-    use cards_proto::GameConfig;
+    use shared::proto::GameConfig;
     use std::collections::HashSet;
 
     fn get_fake_user_proto(user_name: &str) -> User {
