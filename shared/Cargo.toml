@@ -5,3 +5,6 @@ authors = ["Tommy Volk <tvolk131@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+
+[build-dependencies]
+tonic-build = "0.4.2"
