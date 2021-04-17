@@ -1,0 +1,7 @@
+[workspace]
+
+members = [
+    "api_service",
+    "game_service",
+    "shared",
+]
