@@ -627,7 +627,7 @@ fn blank_white_card_config_to_document(blank_white_card_config: &BlankWhiteCardC
                     }
                 }
                 BlankWhiteCardsAdded::Percentage(percentage) => {
-                    if percentage != &0.0 {
+                    if percentage.abs() > 0.0 {
                         doc.insert("percentage", percentage);
                     }
                 }
