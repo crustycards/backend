@@ -1,7 +1,6 @@
-#[cfg(test)]
 pub mod helper {
-    use super::super::service::constants::*;
-    use shared::proto::{
+    use super::super::constants::*;
+    use super::super::proto::{
         game_config::blank_white_card_config::Behavior,
         game_config::{BlankWhiteCardConfig, EndCondition},
         CustomBlackCard, CustomWhiteCard, DefaultBlackCard, DefaultWhiteCard, GameConfig,

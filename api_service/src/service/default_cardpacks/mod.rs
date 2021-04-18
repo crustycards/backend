@@ -222,7 +222,7 @@ fn hash_string(data: &str) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::super::super::proto_helper::ValidatedStringField;
+    use shared::basic_validation::ValidatedStringField;
     use super::*;
 
     #[test]

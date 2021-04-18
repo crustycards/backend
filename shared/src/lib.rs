@@ -5,3 +5,4 @@ pub mod proto;
 pub mod proto_validation;
 pub mod resource_name;
 pub mod time;
+pub mod test;

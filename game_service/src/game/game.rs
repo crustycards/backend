@@ -824,7 +824,7 @@ impl Game {
 #[cfg(test)]
 mod tests {
     use super::super::super::helper::get_answer_fields_from_black_card_in_round;
-    use super::super::super::test::helper::{
+    use shared::test::helper::{
         generate_test_custom_black_cards, generate_test_custom_white_cards,
         generate_test_default_black_cards, generate_test_default_white_cards,
         get_valid_endless_test_game_config, get_valid_test_game_config,

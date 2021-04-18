@@ -654,11 +654,11 @@ impl GameService for GameServiceImpl {
 
 #[cfg(test)]
 mod tests {
-    use super::super::super::proto::{
+    use shared::proto::{
         CustomBlackCard, CustomWhiteCard, DefaultBlackCard, DefaultWhiteCard, User,
     };
-    use super::super::super::test::helper::get_valid_test_game_config;
-    use super::api_resource_fetcher::MockApiResourceFetcher;
+    use shared::test::helper::get_valid_test_game_config;
+    use super::super::api_resource_fetcher::MockApiResourceFetcher;
     use super::*;
 
     // The GameView proto contains fields such as player join_time that will be different for every test run.

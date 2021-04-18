@@ -86,7 +86,7 @@ pub fn parse_page_token_object_id(
 
 #[cfg(test)]
 mod tests {
-    use super::super::super::proto::User;
+    use shared::proto::User;
     use super::*;
 
     #[test]
