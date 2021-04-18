@@ -1,17 +1,20 @@
-use resource_name::{CustomCardpackName, UserName, UserSettingsName};
-use time::chrono_timestamp_to_timestamp_proto;
-use basic_validation::ValidatedStringField;
-use proto_validation::{BoundedPageSize, OptionalField, ValidatedColorScheme, ValidatedGameConfig, ValidatedOAuthCredentials};
-use helper::*;
-use cards_proto::game_config::{
-    blank_white_card_config::BlankWhiteCardsAdded, BlankWhiteCardConfig, EndCondition,
-};
-use cards_proto::*;
+use super::helper::*;
 use bson::{doc, document::ValueAccessError, Bson, Document};
 use futures_lite::{Stream, StreamExt};
 use mockall::automock;
 use mongodb::Collection;
 use prost_types::Timestamp;
+use shared::basic_validation::ValidatedStringField;
+use shared::proto::game_config::{
+    blank_white_card_config::BlankWhiteCardsAdded, BlankWhiteCardConfig, EndCondition,
+};
+use shared::proto::*;
+use shared::proto_validation::{
+    BoundedPageSize, OptionalField, ValidatedColorScheme, ValidatedGameConfig,
+    ValidatedOAuthCredentials,
+};
+use shared::resource_name::{CustomCardpackName, UserName, UserSettingsName};
+use shared::time::chrono_timestamp_to_timestamp_proto;
 use std::collections::HashMap;
 use std::marker::Unpin;
 use tonic::Status;
@@ -624,7 +627,7 @@ fn blank_white_card_config_to_document(blank_white_card_config: &BlankWhiteCardC
                     }
                 }
                 BlankWhiteCardsAdded::Percentage(percentage) => {
-                    if percentage != &0.0 {
+                    if percentage.abs() > 0.0 {
                         doc.insert("percentage", percentage);
                     }
                 }

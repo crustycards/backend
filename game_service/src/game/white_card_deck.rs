@@ -1,13 +1,10 @@
-extern crate rand;
-extern crate uuid;
-
-use cards_proto::{
+use rand::seq::SliceRandom;
+use rand::thread_rng;
+use shared::proto::{
     game_config::{blank_white_card_config::BlankWhiteCardsAdded, BlankWhiteCardConfig},
     playable_white_card::Card,
     BlankWhiteCard, CustomWhiteCard, DefaultWhiteCard, PlayableWhiteCard,
 };
-use rand::seq::SliceRandom;
-use rand::thread_rng;
 use uuid::Uuid;
 
 pub struct WhiteCardDeck {
@@ -165,7 +162,7 @@ impl WhiteCardDeck {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use cards_proto::game_config::blank_white_card_config::Behavior;
+    use shared::proto::game_config::blank_white_card_config::Behavior;
 
     #[test]
     fn get_blank_white_card_count_to_add() {

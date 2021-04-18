@@ -1,5 +1,5 @@
-use game::Game;
-use player_id::PlayerId;
+use super::game::Game;
+use super::player_id::PlayerId;
 use std::time::Duration;
 
 pub struct GameIndexer {
@@ -70,14 +70,14 @@ impl GameIndexer {
 
 #[cfg(test)]
 mod tests {
-    use super::super::super::helper::proto_validation::ValidatedGameConfig;
-    use super::super::super::test::helper::{
+    use super::*;
+    use rand::seq::SliceRandom;
+    use shared::proto_validation::ValidatedGameConfig;
+    use shared::test_helper::{
         generate_test_custom_black_cards, generate_test_custom_white_cards,
         generate_test_default_black_cards, generate_test_default_white_cards,
         get_valid_test_game_config,
     };
-    use super::*;
-    use rand::seq::SliceRandom;
     use std::thread;
     use std::time::Duration;
 

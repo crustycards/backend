@@ -1,13 +1,14 @@
-use helper::get_answer_fields_from_black_card_in_round;
-use helper::playable_white_card_is_in_list;
-use helper::playable_white_cards_have_same_identifier;
-use proto_validation::ValidatedGameConfig;
-use player_id::PlayerId;
-use white_card_deck::WhiteCardDeck;
-use cards_proto::{
+use super::super::helper::{
+    get_answer_fields_from_black_card_in_round, playable_white_card_is_in_list,
+    playable_white_cards_have_same_identifier,
+};
+use super::player_id::PlayerId;
+use super::white_card_deck::WhiteCardDeck;
+use shared::proto::{
     game_config::blank_white_card_config::Behavior, playable_white_card::Card, BlackCardInRound,
     PlayableWhiteCard,
 };
+use shared::proto_validation::ValidatedGameConfig;
 use std::collections::HashMap;
 use tonic::Status;
 

@@ -9,7 +9,7 @@ impl ValidatedStringField {
     pub fn new(s: &str, field_name: &str) -> Result<Self, Status> {
         let string = String::from(s.trim());
         if string.is_empty() {
-            return Err(grpc_error::empty_request_field_error(field_name));
+            return Err(super::grpc_error::empty_request_field_error(field_name));
         }
         Ok(Self { string })
     }

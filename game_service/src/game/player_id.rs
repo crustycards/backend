@@ -1,4 +1,4 @@
-use cards_proto::{player::Identifier, Player};
+use shared::proto::{player::Identifier, Player};
 use std::hash::Hash;
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]

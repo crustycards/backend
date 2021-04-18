@@ -1,7 +1,7 @@
 mod hardcoded_data;
-use resource_name::DefaultCardpackName;
-use cards_proto::{DefaultBlackCard, DefaultCardpack, DefaultWhiteCard};
 use sha2::{Digest, Sha256};
+use shared::proto::{DefaultBlackCard, DefaultCardpack, DefaultWhiteCard};
+use shared::resource_name::DefaultCardpackName;
 use std::collections::HashMap;
 use std::sync::Arc;
 
@@ -222,8 +222,8 @@ fn hash_string(data: &str) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::super::super::proto_helper::ValidatedStringField;
     use super::*;
+    use shared::basic_validation::ValidatedStringField;
 
     #[test]
     fn test_create_list_from_raw_data() {

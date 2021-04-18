@@ -1,13 +1,13 @@
-use cards_proto::cardpack_service_client::CardpackServiceClient;
-use cards_proto::user_service_client::UserServiceClient;
-use cards_proto::GetUserRequest;
-use cards_proto::{
+use async_trait::async_trait;
+use mockall::automock;
+use shared::proto::cardpack_service_client::CardpackServiceClient;
+use shared::proto::user_service_client::UserServiceClient;
+use shared::proto::GetUserRequest;
+use shared::proto::{
     CustomBlackCard, CustomWhiteCard, DefaultBlackCard, DefaultWhiteCard,
     ListCustomBlackCardsRequest, ListCustomWhiteCardsRequest, ListDefaultBlackCardsRequest,
     ListDefaultWhiteCardsRequest, User,
 };
-use async_trait::async_trait;
-use mockall::automock;
 use tonic::transport::Channel;
 use tonic::{Request, Status};
 

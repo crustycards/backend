@@ -1,9 +1,9 @@
-use time::{system_time_to_timestamp_proto, timestamp_proto_to_system_time};
-use player_id::PlayerId;
-use cards_proto::{player::Identifier, Player, User};
+use super::player_id::PlayerId;
 use rand::prelude::SliceRandom;
 use rand::thread_rng;
 use rand::RngCore;
+use shared::proto::{player::Identifier, Player, User};
+use shared::time::{system_time_to_timestamp_proto, timestamp_proto_to_system_time};
 use std::time::SystemTime;
 
 const ARTIFICIAL_PLAYER_DEFAULT_NAMES: [&str; 30] = [

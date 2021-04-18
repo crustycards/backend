@@ -1,14 +1,14 @@
-use resource_name::{CustomCardpackName, CustomWhiteCardName};
-use time::{object_id_to_timestamp_proto, chrono_timestamp_to_timestamp_proto};
-use basic_validation::ValidatedStringField;
-use proto_validation::BoundedPageSize;
-use helper::*;
-use cards_proto::*;
+use super::helper::*;
 use bson::oid::ObjectId;
 use bson::{doc, Document};
 use mockall::automock;
 use mongodb::Collection;
 use prost_types::Timestamp;
+use shared::basic_validation::ValidatedStringField;
+use shared::proto::*;
+use shared::proto_validation::BoundedPageSize;
+use shared::resource_name::{CustomCardpackName, CustomWhiteCardName};
+use shared::time::{chrono_timestamp_to_timestamp_proto, object_id_to_timestamp_proto};
 use std::collections::HashMap;
 use tonic::Status;
 

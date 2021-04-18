@@ -5,3 +5,14 @@ authors = ["Tommy Volk <tvolk131@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+shared = { path = "../shared" }
+lapin = "1.7.0"
+async-trait = "0.1.49"
+mockall = "0.9.1"
+tokio = { version = "1.5.0", features = ["rt-multi-thread"] }
+tonic = "0.4.2"
+uuid = { version = "0.8.2", features = ["serde", "v4"] }
+clokwerk = "0.3.4"
+rand = "0.8.3"
+sha2 = "0.9.3"
+rand_chacha = "0.3.0"

@@ -1,4 +1,4 @@
-use cards_proto::ChatMessage;
+use shared::proto::ChatMessage;
 
 pub struct ChatMessageHandler {
     messages: Vec<ChatMessage>,

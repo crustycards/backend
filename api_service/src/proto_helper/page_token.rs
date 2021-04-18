@@ -1,4 +1,4 @@
-use helper::*;
+use super::super::service::helper::*;
 use bson::oid::ObjectId;
 use prost::Message;
 use prost_types::Any;
@@ -86,8 +86,8 @@ pub fn parse_page_token_object_id(
 
 #[cfg(test)]
 mod tests {
-    use super::super::super::proto::User;
     use super::*;
+    use shared::proto::User;
 
     #[test]
     fn test_serialize_proto_message_to_hex_string() {

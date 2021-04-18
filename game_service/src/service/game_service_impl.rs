@@ -1,15 +1,13 @@
-extern crate uuid;
-
-use amqp::MessageQueue;
-use game_indexer::GameIndexer;
-use grpc_error::{
+use super::super::game::game::Game;
+use super::super::game::game_indexer::GameIndexer;
+use super::super::game::player_id::PlayerId;
+use super::api_resource_fetcher::ApiResourceFetcher;
+use crate::amqp::MessageQueue;
+use clokwerk::{Interval, ScheduleHandle, Scheduler};
+use shared::grpc_error::{
     empty_request_field_error, missing_request_field_error, negative_request_field_error,
 };
-use proto_validation::ValidatedGameConfig;
-use api_resource_fetcher::ApiResourceFetcher;
-use game::Game;
-use player_id::PlayerId;
-use cards_proto::{
+use shared::proto::{
     game_service_server::GameService, search_games_request::GameStageFilter,
     AddArtificialPlayerRequest, BanUserRequest, CreateChatMessageRequest, CreateGameRequest,
     GameInfo, GameView, GetGameViewRequest, JoinGameRequest, KickUserRequest, LeaveGameRequest,
@@ -18,7 +16,7 @@ use cards_proto::{
     StopGameRequest, UnbanUserRequest, UnplayCardsRequest, VoteCardRequest,
     VoteStartNextRoundRequest,
 };
-use clokwerk::{Interval, ScheduleHandle, Scheduler};
+use shared::proto_validation::ValidatedGameConfig;
 use std::sync::Arc;
 use std::sync::Mutex;
 use std::time::Duration;
@@ -656,12 +654,12 @@ impl GameService for GameServiceImpl {
 
 #[cfg(test)]
 mod tests {
-    use super::super::super::proto::{
+    use super::super::api_resource_fetcher::MockApiResourceFetcher;
+    use super::*;
+    use shared::proto::{
         CustomBlackCard, CustomWhiteCard, DefaultBlackCard, DefaultWhiteCard, User,
     };
-    use super::super::super::test::helper::get_valid_test_game_config;
-    use super::api_resource_fetcher::MockApiResourceFetcher;
-    use super::*;
+    use shared::test_helper::get_valid_test_game_config;
 
     // The GameView proto contains fields such as player join_time that will be different for every test run.
     // This function validates that these fields contain some value and then removes them to allow for consistent
