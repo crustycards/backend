@@ -657,7 +657,7 @@ mod tests {
     use shared::proto::{
         CustomBlackCard, CustomWhiteCard, DefaultBlackCard, DefaultWhiteCard, User,
     };
-    use shared::test::helper::get_valid_test_game_config;
+    use shared::test_helper::get_valid_test_game_config;
     use super::super::api_resource_fetcher::MockApiResourceFetcher;
     use super::*;
 

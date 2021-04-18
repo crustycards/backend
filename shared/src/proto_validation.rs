@@ -327,7 +327,7 @@ impl ValidatedGameConfig {
 
 #[cfg(test)]
 mod tests {
-    use super::super::test::helper::get_valid_test_game_config;
+    use super::super::test_helper::get_valid_test_game_config;
     use super::*;
 
     #[test]

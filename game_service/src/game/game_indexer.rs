@@ -71,7 +71,7 @@ impl GameIndexer {
 #[cfg(test)]
 mod tests {
     use shared::proto_validation::ValidatedGameConfig;
-    use shared::test::helper::{
+    use shared::test_helper::{
         generate_test_custom_black_cards, generate_test_custom_white_cards,
         generate_test_default_black_cards, generate_test_default_white_cards,
         get_valid_test_game_config,
