@@ -86,8 +86,8 @@ pub fn parse_page_token_object_id(
 
 #[cfg(test)]
 mod tests {
-    use shared::proto::User;
     use super::*;
+    use shared::proto::User;
 
     #[test]
     fn test_serialize_proto_message_to_hex_string() {

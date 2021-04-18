@@ -222,8 +222,8 @@ fn hash_string(data: &str) -> String {
 
 #[cfg(test)]
 mod tests {
-    use shared::basic_validation::ValidatedStringField;
     use super::*;
+    use shared::basic_validation::ValidatedStringField;
 
     #[test]
     fn test_create_list_from_raw_data() {

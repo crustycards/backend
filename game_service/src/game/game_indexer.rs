@@ -70,14 +70,14 @@ impl GameIndexer {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+    use rand::seq::SliceRandom;
     use shared::proto_validation::ValidatedGameConfig;
     use shared::test_helper::{
         generate_test_custom_black_cards, generate_test_custom_white_cards,
         generate_test_default_black_cards, generate_test_default_white_cards,
         get_valid_test_game_config,
     };
-    use super::*;
-    use rand::seq::SliceRandom;
     use std::thread;
     use std::time::Duration;
 

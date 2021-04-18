@@ -4,5 +4,5 @@ pub mod grpc_error;
 pub mod proto;
 pub mod proto_validation;
 pub mod resource_name;
-pub mod time;
 pub mod test_helper;
+pub mod time;
