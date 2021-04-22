@@ -23,6 +23,6 @@ jobs:
       - name: Lint
         run: |
           rustup component add rustfmt
-          cargo fmt -- --check
           rustup component add clippy
+          cargo fmt -- --check
           cargo clippy

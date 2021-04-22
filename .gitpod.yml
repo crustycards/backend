@@ -1,9 +1,3 @@
 tasks:
-  - name: Build
-    init: cargo build
-  - name: Test
-    init: cargo test
-  - name: Clippy
-    init: rustup component add clippy && cargo clippy
-  - name: Rustfmt
-    init: rustup component add rustfmt && cargo fmt
+  - name: Build/Test/Lint
+    init: cargo build && cargo test && rustup component add rustfmt && rustup component add clippy && cargo fmt && cargo clippy
