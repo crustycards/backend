@@ -1,0 +1,28 @@
+name: Dev CI
+
+on:
+  push:
+    branches:
+      - '**' # Matches every branch.
+      - '!master' # Excludes master.
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: Lint
+        run: |
+          rustup component add rustfmt
+          cargo fmt -- --check
+          rustup component add clippy
+          cargo clippy
+      - name: Build
+        run: cargo build
+      - name: Test
+        run: cargo test
