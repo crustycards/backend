@@ -273,7 +273,9 @@ impl PlayerManager {
             .iter()
             .chain(&self.queued_artificial_players)
             .any(|player| match &player.identifier {
-                Some(Identifier::ArtificialUser(artificial_user)) => artificial_user.id == artificial_player_id,
+                Some(Identifier::ArtificialUser(artificial_user)) => {
+                    artificial_user.id == artificial_player_id
+                }
                 _ => false,
             })
     }
@@ -302,7 +304,9 @@ impl PlayerManager {
         artificial_player_id: &str,
     ) {
         players.retain(|player| match &player.identifier {
-            Some(Identifier::ArtificialUser(artificial_user)) => artificial_user.id != artificial_player_id,
+            Some(Identifier::ArtificialUser(artificial_user)) => {
+                artificial_user.id != artificial_player_id
+            }
             _ => true,
         });
     }

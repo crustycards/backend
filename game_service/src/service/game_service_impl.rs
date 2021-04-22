@@ -280,10 +280,13 @@ impl GameService for GameServiceImpl {
             Err(err) => return Err(err),
         };
         let mut games = self.games.lock().unwrap();
-        if games.get_game_by_player_id(&PlayerId::RealUser(String::from(
-            &request.get_ref().user_name,
-        ))).is_some() {
-            return Err(Status::invalid_argument("User is already in a game."))
+        if games
+            .get_game_by_player_id(&PlayerId::RealUser(String::from(
+                &request.get_ref().user_name,
+            )))
+            .is_some()
+        {
+            return Err(Status::invalid_argument("User is already in a game."));
         }
         let game = match games.get_game_by_game_id(&request.get_ref().game_id) {
             Some(game) => game,

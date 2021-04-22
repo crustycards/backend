@@ -204,7 +204,7 @@ impl ValidatedGameConfig {
         let blank_white_card_config = match config.blank_white_card_config {
             Some(config) => {
                 if let Err(err) = Self::validate_blank_white_card_config(&config) {
-                    return Err(err)
+                    return Err(err);
                 }
                 config
             }

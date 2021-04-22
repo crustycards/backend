@@ -12,8 +12,7 @@ pub struct DefaultCardpackHandler {
 
 impl DefaultCardpackHandler {
     pub fn new_with_custom_packs(packs: Vec<DefaultCardpackData>) -> DefaultCardpackHandler {
-        let pack_list: Vec<Arc<DefaultCardpackData>> =
-            packs.into_iter().map(Arc::from).collect();
+        let pack_list: Vec<Arc<DefaultCardpackData>> = packs.into_iter().map(Arc::from).collect();
         let mut packs_by_name: HashMap<String, Arc<DefaultCardpackData>> = HashMap::new();
         for pack in &pack_list {
             packs_by_name.insert(

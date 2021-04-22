@@ -57,7 +57,7 @@ impl AdminService for AdminServiceImpl {
                             IndexUserError::SonicError(error) => {
                                 Self::sonic_error_to_unknown_status(error)
                             }
-                        })
+                        });
                     }
                 }
                 Err(err) => return Err(Self::mongodb_error_to_unknown_status(err)),
