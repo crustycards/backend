@@ -39,12 +39,9 @@ pub async fn list_items<T>(
         _ => return Err(Status::unknown("Failed to fetch cardpacks.")),
     };
 
-    match previous_item_id_or {
-        Some(previous_item_id) => {
-            find_doc.insert("_id", doc! {"$gt": previous_item_id});
-        }
-        None => {}
-    };
+    if let Some(previous_item_id) = previous_item_id_or {
+        find_doc.insert("_id", doc! {"$gt": previous_item_id});
+    }
 
     let find_options = FindOptions::builder()
         .sort(doc! {"_id": 1})

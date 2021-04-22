@@ -108,10 +108,9 @@ impl SearchClient for SonicSearchClient {
         )?;
         let mut user_names: Vec<UserName> = Vec::new();
         for user_name_string in &user_name_strings {
-            match UserName::new_from_str(user_name_string) {
-                Ok(user_name) => user_names.push(user_name),
-                _ => {} // Ignore invalid returned user names.
-            };
+            if let Ok(user_name) = UserName::new_from_str(user_name_string) {
+                user_names.push(user_name);
+            }
         }
         Ok(user_names)
     }

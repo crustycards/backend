@@ -10,7 +10,6 @@ use shared::proto_validation::{
 };
 use shared::resource_name::*;
 use std::collections::HashSet;
-use std::iter::FromIterator;
 use std::sync::Arc;
 use tonic::{Request, Response, Status};
 

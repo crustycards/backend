@@ -226,15 +226,12 @@ impl UserCollection for MongoUserCollection {
         let mut set_doc = doc! {};
         let mut unset_doc = doc! {};
 
-        match color_scheme_or {
-            Some(color_scheme) => {
-                set_doc.insert("settings.colorScheme", color_scheme as i32);
-            }
-            None => {}
-        };
+        if let Some(color_scheme) = color_scheme_or {
+            set_doc.insert("settings.colorScheme", color_scheme as i32);
+        }
 
-        match quick_start_game_config_or {
-            Some(optional_quick_start_game_config) => match optional_quick_start_game_config {
+        if let Some(optional_quick_start_game_config) = quick_start_game_config_or {
+            match optional_quick_start_game_config {
                 OptionalField::Set(quick_start_game_config) => {
                     set_doc.insert(
                         "settings.quickStartGameConfig",
@@ -246,9 +243,8 @@ impl UserCollection for MongoUserCollection {
                 OptionalField::Unset => {
                     unset_doc.insert("settings.quickStartGameConfig", "");
                 }
-            },
-            None => {}
-        };
+            }
+        }
 
         let options = mongodb::options::FindOneAndUpdateOptions::builder()
             .projection(user_settings_projection_doc())
@@ -672,15 +668,13 @@ fn document_to_user_settings(doc: &Document) -> UserSettings {
 fn document_to_game_config(doc: &Document) -> GameConfig {
     let mut end_condition = None;
 
-    match doc.get_i32("maxScore") {
-        Ok(max_score) => end_condition = Some(EndCondition::MaxScore(max_score)),
-        _ => {}
-    };
+    if let Ok(max_score) = doc.get_i32("maxScore") {
+        end_condition = Some(EndCondition::MaxScore(max_score));
+    }
 
-    match doc.get_bool("endlessMode") {
-        Ok(_) => end_condition = Some(EndCondition::EndlessMode(())),
-        _ => {}
-    };
+    if doc.get_bool("endlessMode").is_ok() {
+        end_condition = Some(EndCondition::EndlessMode(()));
+    }
 
     GameConfig {
         display_name: String::from(doc.get_str("displayName").unwrap_or("")),
@@ -689,36 +683,24 @@ fn document_to_game_config(doc: &Document) -> GameConfig {
         hand_size: doc.get_i32("handSize").unwrap_or(0),
         custom_cardpack_names: {
             let mut custom_cardpack_names = Vec::new();
-            match doc.get_array("customCardpackNames") {
-                Ok(bson_custom_cardpack_names) => {
-                    for bson_name in bson_custom_cardpack_names {
-                        match bson_name {
-                            bson::Bson::String(name) => {
-                                custom_cardpack_names.push(String::from(name))
-                            }
-                            _ => {}
-                        }
+            if let Ok(bson_custom_cardpack_names) = doc.get_array("customCardpackNames") {
+                for bson_name in bson_custom_cardpack_names {
+                    if let bson::Bson::String(name) = bson_name {
+                        custom_cardpack_names.push(String::from(name))
                     }
                 }
-                _ => {}
-            };
+            }
             custom_cardpack_names
         },
         default_cardpack_names: {
             let mut default_cardpack_names = Vec::new();
-            match doc.get_array("defaultCardpackNames") {
-                Ok(bson_default_cardpack_names) => {
-                    for bson_name in bson_default_cardpack_names {
-                        match bson_name {
-                            bson::Bson::String(name) => {
-                                default_cardpack_names.push(String::from(name))
-                            }
-                            _ => {}
-                        }
+            if let Ok(bson_default_cardpack_names) = doc.get_array("defaultCardpackNames") {
+                for bson_name in bson_default_cardpack_names {
+                    if let bson::Bson::String(name) = bson_name {
+                        default_cardpack_names.push(String::from(name))
                     }
                 }
-                _ => {}
-            };
+            }
             default_cardpack_names
         },
         blank_white_card_config: match doc.get_document("blankWhiteCardConfig") {
@@ -733,19 +715,13 @@ fn document_to_game_config(doc: &Document) -> GameConfig {
 fn document_to_blank_white_card_config(doc: &Document) -> BlankWhiteCardConfig {
     let mut blank_white_cards_added = None;
 
-    match doc.get_i32("cardCount") {
-        Ok(card_count) => {
-            blank_white_cards_added = Some(BlankWhiteCardsAdded::CardCount(card_count))
-        }
-        Err(_) => {}
-    };
+    if let Ok(card_count) = doc.get_i32("cardCount") {
+        blank_white_cards_added = Some(BlankWhiteCardsAdded::CardCount(card_count))
+    }
 
-    match doc.get_f64("percentage") {
-        Ok(percentage) => {
-            blank_white_cards_added = Some(BlankWhiteCardsAdded::Percentage(percentage))
-        }
-        Err(_) => {}
-    };
+    if let Ok(percentage) = doc.get_f64("percentage") {
+        blank_white_cards_added = Some(BlankWhiteCardsAdded::Percentage(percentage))
+    }
 
     BlankWhiteCardConfig {
         behavior: doc.get_i32("behavior").unwrap_or(0),

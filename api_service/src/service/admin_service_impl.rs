@@ -51,17 +51,14 @@ impl AdminService for AdminServiceImpl {
         while let Some(user_or) = user_stream.next().await {
             match user_or {
                 Ok(user) => {
-                    match self.search_client.index_user(&user, false) {
-                        Err(err) => {
-                            return Err(match err {
-                                IndexUserError::ParseNameError(error) => error.to_status(),
-                                IndexUserError::SonicError(error) => {
-                                    Self::sonic_error_to_unknown_status(error)
-                                }
-                            })
-                        }
-                        _ => {}
-                    };
+                    if let Err(err) = self.search_client.index_user(&user, false) {
+                        return Err(match err {
+                            IndexUserError::ParseNameError(error) => error.to_status(),
+                            IndexUserError::SonicError(error) => {
+                                Self::sonic_error_to_unknown_status(error)
+                            }
+                        })
+                    }
                 }
                 Err(err) => return Err(Self::mongodb_error_to_unknown_status(err)),
             };

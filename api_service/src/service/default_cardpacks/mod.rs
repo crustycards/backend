@@ -129,7 +129,7 @@ fn create_alpha_sorted_default_white_card_list(
     mut data: Vec<String>,
     parent_default_cardpack_name: &str,
 ) -> Vec<DefaultWhiteCard> {
-    data.sort_by(|a, b| a.to_lowercase().cmp(&b.to_lowercase()));
+    data.sort_by_key(|a| a.to_lowercase());
     let mut default_white_cards = Vec::new();
     for (i, text) in data.into_iter().enumerate() {
         default_white_cards.push(create_default_white_card(
@@ -170,7 +170,7 @@ fn create_default_black_card(
     if text.trim() != text {
         panic!(format!("The `text` property must not start or end with whitespace for instances of DefaultBlackCard. Got `{}`.", text));
     }
-    if answer_fields < 1 || answer_fields > 3 {
+    if !(1..=3).contains(&answer_fields) {
         panic!(
             "The `answer_fields` property must be 1, 2, or 3 for instances of DefaultBlackCard."
         );

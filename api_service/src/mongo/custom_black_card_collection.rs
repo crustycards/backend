@@ -326,18 +326,12 @@ impl CustomBlackCardCollection for MongoCustomBlackCardCollection {
         };
 
         let mut set_doc = doc! {};
-        match updated_card_text_or {
-            Some(updated_card_text) => {
-                set_doc.insert("text", updated_card_text.take_string());
-            }
-            None => {}
-        };
-        match updated_answer_fields_or {
-            Some(updated_answer_fields) => {
-                set_doc.insert("answerFields", updated_answer_fields.take_count());
-            }
-            None => {}
-        };
+        if let Some(updated_card_text) = updated_card_text_or {
+            set_doc.insert("text", updated_card_text.take_string());
+        }
+        if let Some(updated_answer_fields) = updated_answer_fields_or {
+            set_doc.insert("answerFields", updated_answer_fields.take_count());
+        }
 
         let update_doc = doc! {
             "$set": set_doc,
