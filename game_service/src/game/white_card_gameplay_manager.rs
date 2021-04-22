@@ -38,10 +38,9 @@ impl WhiteCardGameplayManager {
     }
 
     pub fn remove_player(&mut self, player_id: &PlayerId) {
-        match self.hands_and_played_cards.remove(&player_id) {
-            Some(mut hand) => self.white_card_deck.discard_many(&mut hand),
-            None => {}
-        };
+        if let Some(mut hand) = self.hands_and_played_cards.remove(&player_id) {
+            self.white_card_deck.discard_many(&mut hand);
+        }
     }
 
     pub fn return_played_cards_to_hands(&mut self) {
@@ -83,28 +82,25 @@ impl WhiteCardGameplayManager {
                 }
             }
         };
-        return Some(hand);
+        Some(hand)
     }
 
     pub fn play_for_artificial_players(&mut self, current_black_card: &BlackCardInRound) {
         // TODO - Handle what to do if artificial player's hand contains blank white cards.
         let answer_fields = get_answer_fields_from_black_card_in_round(current_black_card);
         for (player_id, hand) in self.hands_and_played_cards.iter() {
-            match player_id {
-                PlayerId::ArtificialPlayer(id) => {
-                    if self.played_cards.get(&player_id).is_some() {
-                        continue;
-                    }
-                    if hand.len() >= answer_fields {
-                        let mut played_cards = Vec::new();
-                        for card in &hand[0..answer_fields] {
-                            played_cards.push(card.clone());
-                        }
-                        self.played_cards.insert(player_id.clone(), played_cards);
-                    }
+            if let PlayerId::ArtificialPlayer(id) = player_id {
+                if self.played_cards.get(&player_id).is_some() {
+                    continue;
                 }
-                _ => {}
-            };
+                if hand.len() >= answer_fields {
+                    let mut played_cards = Vec::new();
+                    for card in &hand[0..answer_fields] {
+                        played_cards.push(card.clone());
+                    }
+                    self.played_cards.insert(player_id.clone(), played_cards);
+                }
+            }
         }
     }
 
@@ -193,12 +189,9 @@ impl WhiteCardGameplayManager {
 
     fn discard_played_cards(&mut self) {
         for (player_id, played_cards) in &self.played_cards {
-            match self.hands_and_played_cards.get_mut(player_id) {
-                Some(hand) => {
-                    hand.retain(|card| !playable_white_card_is_in_list(card, played_cards));
-                }
-                None => {}
-            };
+            if let Some(hand) = self.hands_and_played_cards.get_mut(player_id) {
+                hand.retain(|card| !playable_white_card_is_in_list(card, played_cards));
+            }
         }
         for (_, mut cards) in self.played_cards.drain() {
             self.white_card_deck.discard_many(&mut cards);
@@ -206,7 +199,7 @@ impl WhiteCardGameplayManager {
     }
 
     fn draw_hands_to_full(&mut self) {
-        for (_, hand) in &mut self.hands_and_played_cards {
+        for hand in self.hands_and_played_cards.values_mut() {
             let amount_needed_to_draw: usize = std::cmp::max(self.hand_size - hand.len(), 0);
             if amount_needed_to_draw > 0 {
                 hand.append(
@@ -228,7 +221,7 @@ impl WhiteCardGameplayManager {
             Some(hand) => hand
                 .into_iter()
                 .find(|hand_card| playable_white_cards_have_same_identifier(card, *hand_card)),
-            None => return None,
+            None => None,
         }
     }
 }

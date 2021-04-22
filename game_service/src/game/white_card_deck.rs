@@ -111,15 +111,9 @@ impl WhiteCardDeck {
     }
 
     fn sanitize_card(card: &mut PlayableWhiteCard) {
-        match &mut card.card {
-            Some(c) => {
-                match c {
-                    Card::BlankWhiteCard(blank_card) => blank_card.open_text.clear(),
-                    _ => {}
-                };
-            }
-            None => {}
-        };
+        if let Some(Card::BlankWhiteCard(blank_card)) = &mut card.card {
+            blank_card.open_text.clear();
+        }
     }
 
     fn draw_one(&mut self) -> Option<PlayableWhiteCard> {

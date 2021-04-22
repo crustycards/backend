@@ -59,14 +59,14 @@ pub fn playable_white_cards_have_same_identifier(
 
 pub fn playable_white_card_is_in_list(
     card: &PlayableWhiteCard,
-    cards: &Vec<PlayableWhiteCard>,
+    cards: &[PlayableWhiteCard],
 ) -> bool {
     for c in cards {
         if playable_white_cards_have_same_identifier(card, c) {
             return true;
         }
     }
-    return false;
+    false
 }
 
 pub fn get_answer_fields_from_black_card_in_round(card: &BlackCardInRound) -> usize {

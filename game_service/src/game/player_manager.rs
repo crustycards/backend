@@ -311,14 +311,11 @@ impl PlayerManager {
         for player in &self.real_players {
             match &player.identifier {
                 Some(identifier) => {
-                    match identifier {
-                        Identifier::User(user) => {
-                            if !user.name.is_empty() {
-                                user_names.push(&user.name);
-                            }
+                    if let Identifier::User(user) = identifier {
+                        if !user.name.is_empty() {
+                            user_names.push(&user.name);
                         }
-                        _ => {}
-                    };
+                    }
                 }
                 None => {}
             };
@@ -341,13 +338,8 @@ impl PlayerManager {
         artificial_player_id: &str,
     ) {
         players.retain(|player| match &player.identifier {
-            Some(identifier) => match identifier {
-                Identifier::ArtificialUser(artificial_user) => {
-                    artificial_user.id != artificial_player_id
-                }
-                _ => true,
-            },
-            None => true,
+            Some(Identifier::ArtificialUser(artificial_user)) => artificial_user.id != artificial_player_id,
+            _ => true,
         });
     }
 
