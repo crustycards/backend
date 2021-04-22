@@ -16,14 +16,14 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
+      - name: Build
+        run: cargo build
+      - name: Test
+        run: cargo test
       - name: Lint
         run: |
           rustup component add rustfmt
           cargo fmt -- --check
           rustup component add clippy
           cargo clippy
-      - name: Build
-        run: cargo build
-      - name: Test
-        run: cargo test
 # TODO - Add deploy step here.
