@@ -209,7 +209,7 @@ impl CardpackService for CardpackServiceImpl {
             Err(err) => return Err(err.to_status()),
         };
 
-        let update_fields: HashSet<String> = HashSet::from_iter(update_mask.paths.iter().cloned());
+        let update_fields: HashSet<String> = update_mask.paths.iter().cloned().collect();
         let updated_display_name_or = if update_fields.contains("display_name") {
             match ValidatedStringField::new(
                 &custom_cardpack.display_name,
@@ -417,7 +417,7 @@ impl CardpackService for CardpackServiceImpl {
             Err(err) => return Err(err.to_status()),
         };
 
-        let update_fields: HashSet<String> = HashSet::from_iter(update_mask.paths.iter().cloned());
+        let update_fields: HashSet<String> = update_mask.paths.iter().cloned().collect();
 
         let updated_card_text_or = if update_fields.contains("text") {
             Some(ValidatedStringField::new(
@@ -470,7 +470,7 @@ impl CardpackService for CardpackServiceImpl {
             Err(err) => return Err(err.to_status()),
         };
 
-        let update_fields: HashSet<String> = HashSet::from_iter(update_mask.paths.iter().cloned());
+        let update_fields: HashSet<String> = update_mask.paths.iter().cloned().collect();
         let updated_card_text_or = if update_fields.contains("text") {
             match ValidatedStringField::new(&custom_white_card.text, "custom_white_card.text") {
                 Ok(card_text) => Some(card_text),

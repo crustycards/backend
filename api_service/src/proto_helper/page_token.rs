@@ -7,7 +7,7 @@ use tonic::Status;
 
 fn get_string_hash(data: &str) -> Vec<u8> {
     let hash: [u8; 32] = Sha256::digest(data.as_bytes()).into();
-    return hash.to_vec();
+    hash.to_vec()
 }
 
 fn serialize_proto_message_to_hex_string(message: &impl Message) -> String {

@@ -13,7 +13,7 @@ pub struct DefaultCardpackHandler {
 impl DefaultCardpackHandler {
     pub fn new_with_custom_packs(packs: Vec<DefaultCardpackData>) -> DefaultCardpackHandler {
         let pack_list: Vec<Arc<DefaultCardpackData>> =
-            packs.into_iter().map(|pack| Arc::from(pack)).collect();
+            packs.into_iter().map(Arc::from).collect();
         let mut packs_by_name: HashMap<String, Arc<DefaultCardpackData>> = HashMap::new();
         for pack in &pack_list {
             packs_by_name.insert(
@@ -92,7 +92,7 @@ impl DefaultCardpackData {
                 default_white_card_list,
             ));
         }
-        return default_cardpack_data_list;
+        default_cardpack_data_list
     }
 
     pub fn get_default_cardpack(&self) -> &DefaultCardpack {
@@ -122,7 +122,7 @@ fn create_alpha_sorted_default_black_card_list(
             parent_default_cardpack_name,
         ));
     }
-    return default_black_cards;
+    default_black_cards
 }
 
 fn create_alpha_sorted_default_white_card_list(
@@ -138,7 +138,7 @@ fn create_alpha_sorted_default_white_card_list(
             parent_default_cardpack_name,
         ));
     }
-    return default_white_cards;
+    default_white_cards
 }
 
 fn create_default_cardpack(index: usize, display_name: String) -> DefaultCardpack {
@@ -155,7 +155,7 @@ fn create_default_cardpack(index: usize, display_name: String) -> DefaultCardpac
         ),
         display_name,
     };
-    return default_cardpack;
+    default_cardpack
 }
 
 fn create_default_black_card(
@@ -187,7 +187,7 @@ fn create_default_black_card(
         text,
         answer_fields,
     };
-    return default_black_card;
+    default_black_card
 }
 
 fn create_default_white_card(
@@ -212,12 +212,12 @@ fn create_default_white_card(
         ),
         text,
     };
-    return default_white_card;
+    default_white_card
 }
 
 fn hash_string(data: &str) -> String {
     let hash: [u8; 32] = Sha256::digest(data.as_bytes()).into();
-    return hex::encode(hash);
+    hex::encode(hash)
 }
 
 #[cfg(test)]

@@ -26,12 +26,11 @@ impl UserServiceImpl {
         search_client: Arc<dyn SearchClient>,
     ) -> UserServiceImpl {
         let profile_image_handler = ProfileImageHandler::new();
-        let user_service_impl = UserServiceImpl {
+        UserServiceImpl {
             user_collection,
             search_client,
             profile_image_handler,
-        };
-        return user_service_impl;
+        }
     }
 }
 
@@ -68,7 +67,7 @@ impl UserService for UserServiceImpl {
             Err(err) => return Err(err.to_status()),
         };
 
-        let update_fields: HashSet<String> = HashSet::from_iter(update_mask.paths.iter().cloned());
+        let update_fields: HashSet<String> = update_mask.paths.iter().cloned().collect();
         let updated_display_name_or = if update_fields.contains("display_name") {
             Some(ValidatedStringField::new(
                 &user.display_name,
@@ -134,7 +133,7 @@ impl UserService for UserServiceImpl {
             Err(err) => return Err(err.to_status()),
         };
 
-        let update_fields: HashSet<String> = HashSet::from_iter(update_mask.paths.iter().cloned());
+        let update_fields: HashSet<String> = update_mask.paths.iter().cloned().collect();
 
         let color_scheme_or = if update_fields.contains("color_scheme") {
             Some(ValidatedColorScheme::new(user_settings.color_scheme)?)
@@ -212,7 +211,7 @@ impl UserService for UserServiceImpl {
             .assert_user_exists(user_profile_image_name.clone().to_user_name())
             .await?;
 
-        let update_fields: HashSet<String> = HashSet::from_iter(update_mask.paths.iter().cloned());
+        let update_fields: HashSet<String> = update_mask.paths.iter().cloned().collect();
 
         let updated_user_profile_image = if update_fields.contains("image_data") {
             if user_profile_image.image_data.is_empty() {
