@@ -106,11 +106,8 @@ impl PlayerManager {
         self.real_players
             .iter()
             .find(|player| match &player.identifier {
-                Some(identifier) => match identifier {
-                    Identifier::User(user) => user.name == user_name,
-                    _ => false,
-                },
-                None => false,
+                Some(Identifier::User(user)) => user.name == user_name,
+                _ => false,
             })
     }
 
@@ -124,11 +121,8 @@ impl PlayerManager {
         };
 
         match &first_player.identifier {
-            Some(identifier) => match identifier {
-                Identifier::User(user) => Some(user),
-                _ => None,
-            },
-            None => None,
+            Some(Identifier::User(user)) => Some(user),
+            _ => None,
         }
     }
 
@@ -168,11 +162,8 @@ impl PlayerManager {
         };
 
         match &player.identifier {
-            Some(identifier) => match identifier {
-                Identifier::User(user) => Some(user),
-                _ => None,
-            },
-            None => None,
+            Some(Identifier::User(user)) => Some(user),
+            _ => None,
         }
     }
 
@@ -208,7 +199,7 @@ impl PlayerManager {
             .real_players
             .iter()
             .chain(self.artificial_players.iter())
-            .map(|player| player.clone())
+            .cloned()
             .collect();
 
         Self::sort_player_list_by_join_time(&mut all_players);
@@ -221,7 +212,7 @@ impl PlayerManager {
             .queued_real_players
             .iter()
             .chain(self.queued_artificial_players.iter())
-            .map(|player| player.clone())
+            .cloned()
             .collect();
 
         Self::sort_player_list_by_join_time(&mut all_queued_players);
@@ -247,22 +238,13 @@ impl PlayerManager {
 
     fn artificial_player_name_is_in_use(&self, artificial_player_name: &str) -> bool {
         for player in &self.artificial_players {
-            match &player.identifier {
-                Some(identifier) => {
-                    match identifier {
-                        Identifier::ArtificialUser(artificial_user) => {
-                            if artificial_user.display_name == artificial_player_name {
-                                return true;
-                            }
-                        }
-                        _ => {}
-                    };
+            if let Some(Identifier::ArtificialUser(artificial_user)) = &player.identifier {
+                if artificial_user.display_name == artificial_player_name {
+                    return true;
                 }
-                None => {}
-            };
+            }
         }
-
-        return false;
+        false
     }
 
     pub fn get_unused_default_artificial_player_name(&self) -> String {
@@ -280,56 +262,38 @@ impl PlayerManager {
         self.real_players
             .iter()
             .chain(&self.queued_real_players)
-            .find(|player| match &player.identifier {
-                Some(identifier) => match identifier {
-                    Identifier::User(user) => user.name == user_name,
-                    _ => false,
-                },
-                None => false,
+            .any(|player| match &player.identifier {
+                Some(Identifier::User(user)) => user.name == user_name,
+                _ => false,
             })
-            .is_some()
     }
 
     pub fn artificial_player_is_in_game(&self, artificial_player_id: &str) -> bool {
         self.artificial_players
             .iter()
             .chain(&self.queued_artificial_players)
-            .find(|player| match &player.identifier {
-                Some(identifier) => match identifier {
-                    Identifier::ArtificialUser(artificial_user) => {
-                        artificial_user.id == artificial_player_id
-                    }
-                    _ => false,
-                },
-                None => false,
+            .any(|player| match &player.identifier {
+                Some(Identifier::ArtificialUser(artificial_user)) => artificial_user.id == artificial_player_id,
+                _ => false,
             })
-            .is_some()
     }
 
     pub fn get_user_names_for_all_real_players(&self) -> Vec<&str> {
         let mut user_names: Vec<&str> = Vec::new();
         for player in &self.real_players {
-            match &player.identifier {
-                Some(identifier) => {
-                    if let Identifier::User(user) = identifier {
-                        if !user.name.is_empty() {
-                            user_names.push(&user.name);
-                        }
-                    }
+            if let Some(Identifier::User(user)) = &player.identifier {
+                if !user.name.is_empty() {
+                    user_names.push(&user.name);
                 }
-                None => {}
-            };
+            }
         }
         user_names
     }
 
     fn remove_real_player_from_vec_by_name(players: &mut Vec<Player>, user_name: &str) {
         players.retain(|player| match &player.identifier {
-            Some(identifier) => match identifier {
-                Identifier::User(user) => user.name != user_name,
-                _ => true,
-            },
-            None => true,
+            Some(Identifier::User(user)) => user.name != user_name,
+            _ => true,
         });
     }
 

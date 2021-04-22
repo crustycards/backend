@@ -38,7 +38,7 @@ impl GameIndexer {
         // to prevent iterating over the entire list whenever a game is inserted.
         for (index, g) in self.games_by_insert_time.iter().enumerate().rev() {
             if g.get_create_time()
-                .duration_since(game.get_create_time().clone())
+                .duration_since(*game.get_create_time())
                 .is_err()
             {
                 self.games_by_insert_time.insert(index + 1, game);

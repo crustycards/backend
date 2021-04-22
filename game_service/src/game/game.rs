@@ -768,8 +768,7 @@ impl Game {
     fn user_is_banned(&self, user_name: &str) -> bool {
         self.banned_users
             .iter()
-            .find(|user| user.name == user_name)
-            .is_some()
+            .any(|user| user.name == user_name)
     }
 
     pub fn get_last_activity_time(&self) -> &SystemTime {
