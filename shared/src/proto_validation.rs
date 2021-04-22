@@ -69,13 +69,13 @@ pub struct BoundedPageSize {
 impl BoundedPageSize {
     fn get_bounded_page_size(page_size: i32) -> Result<i64, Status> {
         if page_size < 0 {
-            return Err(Status::invalid_argument("Page size cannot be negative."));
+            Err(Status::invalid_argument("Page size cannot be negative."))
         } else if page_size == 0 {
-            return Ok(50);
+            Ok(50)
         } else if page_size > 1000 {
-            return Ok(1000);
+            Ok(1000)
         } else {
-            return Ok(page_size as i64);
+            Ok(page_size as i64)
         }
     }
 
@@ -203,10 +203,9 @@ impl ValidatedGameConfig {
 
         let blank_white_card_config = match config.blank_white_card_config {
             Some(config) => {
-                match Self::validate_blank_white_card_config(&config) {
-                    Err(err) => return Err(err),
-                    _ => {}
-                };
+                if let Err(err) = Self::validate_blank_white_card_config(&config) {
+                    return Err(err)
+                }
                 config
             }
             None => {

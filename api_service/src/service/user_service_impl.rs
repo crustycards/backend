@@ -175,7 +175,7 @@ impl UserService for UserServiceImpl {
         };
 
         self.user_collection
-            .assert_user_exists(user_profile_image_name.clone().to_user_name())
+            .assert_user_exists(user_profile_image_name.to_user_name())
             .await?;
 
         Ok(Response::new(
@@ -207,7 +207,7 @@ impl UserService for UserServiceImpl {
         };
 
         self.user_collection
-            .assert_user_exists(user_profile_image_name.clone().to_user_name())
+            .assert_user_exists(user_profile_image_name.to_user_name())
             .await?;
 
         let update_fields: HashSet<String> = update_mask.paths.iter().cloned().collect();

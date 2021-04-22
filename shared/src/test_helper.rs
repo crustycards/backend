@@ -18,7 +18,7 @@ pub fn generate_test_custom_black_cards(count: usize) -> Vec<CustomBlackCard> {
         };
         cards.push(card);
     }
-    return cards;
+    cards
 }
 
 pub fn generate_test_custom_white_cards(count: usize) -> Vec<CustomWhiteCard> {
@@ -33,7 +33,7 @@ pub fn generate_test_custom_white_cards(count: usize) -> Vec<CustomWhiteCard> {
         };
         cards.push(card);
     }
-    return cards;
+    cards
 }
 
 pub fn generate_test_default_black_cards(count: usize) -> Vec<DefaultBlackCard> {
@@ -46,7 +46,7 @@ pub fn generate_test_default_black_cards(count: usize) -> Vec<DefaultBlackCard> 
         };
         cards.push(card);
     }
-    return cards;
+    cards
 }
 
 pub fn generate_test_default_white_cards(count: usize) -> Vec<DefaultWhiteCard> {
@@ -58,7 +58,7 @@ pub fn generate_test_default_white_cards(count: usize) -> Vec<DefaultWhiteCard> 
         };
         cards.push(card);
     }
-    return cards;
+    cards
 }
 
 pub fn get_valid_test_game_config() -> GameConfig {

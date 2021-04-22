@@ -10,7 +10,7 @@ pub enum ParseNameError {
 }
 
 impl ParseNameError {
-    pub fn to_status(self) -> Status {
+    pub fn to_status(&self) -> Status {
         match self {
             ParseNameError::PathDoesNotMatchFormat(format, path) => {
                 Status::invalid_argument(format!(
@@ -49,7 +49,7 @@ impl std::fmt::Display for ParseNameError {
 
 fn parse_name(format: &str, path: &str) -> Result<Vec<String>, ParseNameError> {
     let mut tokens = Vec::new();
-    for (a, b) in format.split("/").zip(path.split("/")) {
+    for (a, b) in format.split('/').zip(path.split('/')) {
         if a == "{}" {
             tokens.push(String::from(b));
         } else if a != b {
@@ -59,8 +59,8 @@ fn parse_name(format: &str, path: &str) -> Result<Vec<String>, ParseNameError> {
             ));
         }
     }
-    if format.split("/").enumerate().last().unwrap().0
-        != path.split("/").enumerate().last().unwrap().0
+    if format.split('/').enumerate().last().unwrap().0
+        != path.split('/').enumerate().last().unwrap().0
     {
         return Err(ParseNameError::PathDoesNotMatchFormat(
             format.to_string(),
@@ -244,9 +244,9 @@ impl UserProfileImageName {
         &self.object_id
     }
 
-    pub fn to_user_name(self) -> UserName {
+    pub fn to_user_name(&self) -> UserName {
         UserName {
-            object_id: self.object_id,
+            object_id: self.object_id.clone(),
         }
     }
 }
