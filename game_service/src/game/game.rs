@@ -162,26 +162,18 @@ impl Game {
 
     fn all_players_have_played_this_round(&self) -> bool {
         for player in self.player_manager.get_real_players().iter() {
-            match &player.identifier {
-                Some(identifier) => match identifier {
-                    Identifier::User(user) => {
-                        let user_name = &user.name;
-                        if !self.player_manager.is_judge(user_name)
-                            && !self
-                                .white_card_gameplay_manager
-                                .player_has_played_this_round(&PlayerId::RealUser(String::from(
-                                    user_name,
-                                )))
-                        {
-                            return false;
-                        }
-                    }
-                    _ => {}
-                },
-                None => {}
+            if let Some(Identifier::User(user)) = &player.identifier {
+                let user_name = &user.name;
+                if !self.player_manager.is_judge(user_name)
+                    && !self
+                        .white_card_gameplay_manager
+                        .player_has_played_this_round(&PlayerId::RealUser(String::from(user_name)))
+                {
+                    return false;
+                }
             }
         }
-        return true;
+        true
     }
 
     fn increment_score_and_maybe_stop_game(&mut self, player_id: &PlayerId) {
@@ -335,19 +327,16 @@ impl Game {
     }
 
     fn remove_player(&mut self, player_id: &PlayerId) {
-        match player_id {
-            PlayerId::RealUser(user_name) => {
-                if self.is_running()
-                    && self.player_manager.is_judge(user_name)
-                    && self.stage != Stage::RoundEndPhase
-                {
-                    self.white_card_gameplay_manager
-                        .return_played_cards_to_hands();
-                    self.stage = Stage::RoundEndPhase;
-                }
+        if let PlayerId::RealUser(user_name) = player_id {
+            if self.is_running()
+                && self.player_manager.is_judge(user_name)
+                && self.stage != Stage::RoundEndPhase
+            {
+                self.white_card_gameplay_manager
+                    .return_played_cards_to_hands();
+                self.stage = Stage::RoundEndPhase;
             }
-            _ => {}
-        };
+        }
         self.player_manager.remove_player(&player_id);
         self.white_card_gameplay_manager.remove_player(&player_id);
 
@@ -463,7 +452,7 @@ impl Game {
         }
         self.banned_users.push(troll_user);
         self.update_last_activity_time();
-        return Ok(());
+        Ok(())
     }
 
     pub fn unban_user(&mut self, user_name: &str, troll_user_name: &str) -> Result<(), Status> {
@@ -557,7 +546,7 @@ impl Game {
             ));
         }
 
-        let mut played_cards = self.get_pseudorandom_ordered_white_cards_played_list()?;
+        let mut played_cards = self.get_pseudorandom_ordered_white_cards_played_list();
 
         let voted_cards = match played_cards.get_mut((choice - 1) as usize) {
             Some(cards) => cards,
@@ -565,15 +554,11 @@ impl Game {
         };
 
         let winner_or = &(voted_cards).player;
-        match &winner_or {
-            Some(winner) => {
-                match PlayerId::from_player_proto(&winner) {
-                    Some(winner_id) => self.increment_score_and_maybe_stop_game(&winner_id),
-                    None => {}
-                };
+        if let Some(winner) = &winner_or {
+            if let Some(winner_id) = PlayerId::from_player_proto(&winner) {
+                self.increment_score_and_maybe_stop_game(&winner_id);
             }
-            None => {}
-        };
+        }
 
         self.stage = Stage::RoundEndPhase;
 
@@ -601,10 +586,7 @@ impl Game {
 
         let round = PastRound {
             black_card: Some(self.black_card_deck.get_current_black_card().clone()),
-            white_played: match self.get_pseudorandom_ordered_white_cards_played_list() {
-                Ok(white_played) => white_played,
-                Err(err) => return Err(err),
-            },
+            white_played: self.get_pseudorandom_ordered_white_cards_played_list(),
             judge: match self.player_manager.get_judge() {
                 Some(judge) => Some(judge.clone()),
                 None => None,
@@ -632,15 +614,8 @@ impl Game {
     pub fn post_message(&mut self, user_name: &str, message_text: String) -> Result<(), Status> {
         let user = match self.player_manager.get_real_player(user_name) {
             Some(player) => match &player.identifier {
-                Some(identifier) => match identifier {
-                    Identifier::User(user) => user,
-                    _ => {
-                        return Err(Status::invalid_argument(
-                            "Only real users can post messages.",
-                        ));
-                    }
-                },
-                None => {
+                Some(Identifier::User(user)) => user,
+                _ => {
                     return Err(Status::invalid_argument(
                         "Only real users can post messages.",
                     ));
@@ -670,9 +645,9 @@ impl Game {
             hand: self
                 .white_card_gameplay_manager
                 .get_hand_belonging_to_player(&PlayerId::RealUser(String::from(user_name)))
-                .unwrap_or(Vec::new())
+                .unwrap_or_default()
                 .into_iter()
-                .map(|card| card.clone())
+                .cloned()
                 .collect(),
             players: self.player_manager.clone_all_players_sorted_by_join_time(),
             queued_players: self
@@ -687,24 +662,22 @@ impl Game {
                 Some(owner) => Some(owner.clone()),
                 None => None,
             },
-            white_played: match self.get_pseudorandom_ordered_white_cards_played_list() {
-                Ok(mut played_cards) => {
-                    match self.stage {
-                        Stage::PlayPhase => {
-                            for entry in played_cards.iter_mut() {
-                                entry.card_texts.clear();
-                            }
+            white_played: {
+                let mut played_cards = self.get_pseudorandom_ordered_white_cards_played_list();
+                match self.stage {
+                    Stage::PlayPhase => {
+                        for entry in played_cards.iter_mut() {
+                            entry.card_texts.clear();
                         }
-                        Stage::JudgePhase => {
-                            for entry in played_cards.iter_mut() {
-                                entry.player = None;
-                            }
+                    }
+                    Stage::JudgePhase => {
+                        for entry in played_cards.iter_mut() {
+                            entry.player = None;
                         }
-                        _ => {}
-                    };
-                    played_cards
-                }
-                Err(err) => return Err(err),
+                    }
+                    _ => {}
+                };
+                played_cards
             },
             current_black_card: if self.is_running() {
                 Some(self.black_card_deck.get_current_black_card().clone())
@@ -773,9 +746,7 @@ impl Game {
         &self.last_activity_time
     }
 
-    fn get_pseudorandom_ordered_white_cards_played_list(
-        &self,
-    ) -> Result<Vec<WhiteCardsPlayed>, Status> {
+    fn get_pseudorandom_ordered_white_cards_played_list(&self) -> Vec<WhiteCardsPlayed> {
         let mut white_played_list = Vec::new();
         for (player_id, cards) in self.white_card_gameplay_manager.get_played_cards() {
             let mut card_texts = Vec::new();
@@ -798,7 +769,7 @@ impl Game {
         let mut rand = rand_chacha::ChaChaRng::from_seed(self.get_round_nonce_digest());
         white_played_list.shuffle(&mut rand);
 
-        Ok(white_played_list)
+        white_played_list
     }
 
     pub fn search_white_card_texts(
@@ -1088,9 +1059,7 @@ mod tests {
         // remove_artificial_player_as_owner(&mut game);
         let judge_name = String::from(&game.player_manager.get_judge().unwrap().name);
         assert_eq!(game.vote_card(&judge_name, 1).is_ok(), true);
-        let white_cards_played_list = game
-            .get_pseudorandom_ordered_white_cards_played_list()
-            .unwrap();
+        let white_cards_played_list = game.get_pseudorandom_ordered_white_cards_played_list();
         for white_played_entry in white_cards_played_list {
             assert!(white_played_entry.player.is_some());
         }
@@ -1108,7 +1077,6 @@ mod tests {
         add_artificial_player_as_owner(&mut game);
         assert_eq!(
             game.get_pseudorandom_ordered_white_cards_played_list()
-                .unwrap()
                 .len(),
             2
         );
@@ -1121,7 +1089,6 @@ mod tests {
         assert_eq!(game.stage, Stage::JudgePhase);
         assert_eq!(
             game.get_pseudorandom_ordered_white_cards_played_list()
-                .unwrap()
                 .len(),
             3
         );

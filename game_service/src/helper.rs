@@ -5,9 +5,9 @@ use shared::proto::{
 
 #[derive(PartialEq)]
 enum PlayableCardType {
-    CustomCard,
-    BlankCard,
-    DefaultCard,
+    Custom,
+    Blank,
+    Default,
 }
 
 #[derive(PartialEq)]
@@ -22,16 +22,16 @@ fn get_playable_white_card_identifier(
     match &card.card {
         Some(c) => match c {
             PlayableCard::CustomWhiteCard(custom_white_card) => Some(PlayableWhiteCardIdentifier {
-                card_type: PlayableCardType::CustomCard,
+                card_type: PlayableCardType::Custom,
                 card_id: &custom_white_card.name,
             }),
             PlayableCard::BlankWhiteCard(blank_white_card) => Some(PlayableWhiteCardIdentifier {
-                card_type: PlayableCardType::BlankCard,
+                card_type: PlayableCardType::Blank,
                 card_id: &blank_white_card.id,
             }),
             PlayableCard::DefaultWhiteCard(default_white_card) => {
                 Some(PlayableWhiteCardIdentifier {
-                    card_type: PlayableCardType::DefaultCard,
+                    card_type: PlayableCardType::Default,
                     card_id: &default_white_card.name,
                 })
             }

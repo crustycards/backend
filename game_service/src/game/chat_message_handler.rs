@@ -32,17 +32,14 @@ impl ChatMessageHandler {
             }
         };
 
-        match self.last_message_index {
-            Some(last_message_index) => {
-                if self.messages.len() < self.max_len {
-                    self.messages.push(message);
-                } else {
-                    let _old_message =
-                        std::mem::replace(&mut self.messages[last_message_index], message);
-                }
+        if let Some(last_message_index) = self.last_message_index {
+            if self.messages.len() < self.max_len {
+                self.messages.push(message);
+            } else {
+                let _old_message =
+                    std::mem::replace(&mut self.messages[last_message_index], message);
             }
-            None => {} // Should never happen because of the first match statement in this function.
-        };
+        }
     }
 
     pub fn clone_message_list(&self) -> Vec<ChatMessage> {
