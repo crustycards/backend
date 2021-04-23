@@ -16,7 +16,7 @@ RUN \
     mkdir -p /build-out &&\
     cp target/release/game_service /build-out/
 
-FROM debian:10-slim
+FROM alpine:latest
 COPY --from=build /build-out/game_service /
 EXPOSE 50052
 CMD /game_service
