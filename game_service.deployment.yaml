@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: game
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: game
+  template:
+    metadata:
+      labels:
+        app: game
+    spec:
+      containers:
+      - name: game
+        image: <IMAGE>
+        ports:
+        - containerPort: 50052
+        env:
+        - name: AMQP_URI
+          value: "<AMQP_URI>"
+        - name: API_URI
+          value: "<API_URI>"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: game_service
+  annotations:
+    service.beta.kubernetes.io/do-loadbalancer-hostname: "game.crusty.cards"
+spec:
+  type: LoadBalancer
+  ports:
+    - name: grpc
+      port: 50052
+      targetPort: 50052
+  selector:
+    app: frontend
