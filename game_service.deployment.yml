@@ -29,6 +29,8 @@ metadata:
   name: game-service
   annotations:
     service.beta.kubernetes.io/do-loadbalancer-hostname: "game.crusty.cards"
+    service.beta.kubernetes.io/do-loadbalancer-tls-passthrough: "true"
+    service.beta.kubernetes.io/do-loadbalancer-tls-ports: "50052"
 spec:
   type: LoadBalancer
   ports:
