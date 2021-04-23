@@ -51,8 +51,8 @@ jobs:
         run: |
           TAG=$(echo $GITHUB_SHA | head -c7)
           sed -i 's|<IMAGE>|registry.digitalocean.com/cards/api_service:'${TAG}'|' $GITHUB_WORKSPACE/api_service.deployment.yml
-          sed -i 's|<MONGO_URI>|'${MONGO_URI}'|' $GITHUB_WORKSPACE/api_service.deployment.yml
-          sed -i 's|<SONIC_URI>|'${SONIC_URI}'|' $GITHUB_WORKSPACE/api_service.deployment.yml
+          sed -i 's|<MONGO_URI>|'${secrets.MONGO_URI}'|' $GITHUB_WORKSPACE/api_service.deployment.yml
+          sed -i 's|<SONIC_URI>|'${secrets.SONIC_URI}'|' $GITHUB_WORKSPACE/api_service.deployment.yml
 
       - name: Save DigitalOcean kubeconfig with short-lived credentials
         run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 cards
@@ -87,8 +87,8 @@ jobs:
         run: |
           TAG=$(echo $GITHUB_SHA | head -c7)
           sed -i 's|<IMAGE>|registry.digitalocean.com/cards/game_service:'${TAG}'|' $GITHUB_WORKSPACE/game_service.deployment.yml
-          sed -i 's|<AMQP_URI>|'${AMQP_URI}'|' $GITHUB_WORKSPACE/game_service.deployment.yml
-          sed -i 's|<API_URI>|'${API_URI}'|' $GITHUB_WORKSPACE/game_service.deployment.yml
+          sed -i 's|<AMQP_URI>|'${secrets.AMQP_URI}'|' $GITHUB_WORKSPACE/game_service.deployment.yml
+          sed -i 's|<API_URI>|'${secrets.API_URI}'|' $GITHUB_WORKSPACE/game_service.deployment.yml
 
       - name: Save DigitalOcean kubeconfig with short-lived credentials
         run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 cards
