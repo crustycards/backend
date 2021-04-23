@@ -93,8 +93,8 @@ jobs:
           sed -i 's|<AMQP_URI>|'${AMQP_URI}'|' $GITHUB_WORKSPACE/game_service.deployment.yml
           sed -i 's|<API_URI>|'${API_URI}'|' $GITHUB_WORKSPACE/game_service.deployment.yml
         env:
-          AMQP_LIB: ${{ secrets.AMQP_LIB }}
-          API_URL: ${{ secrets.API_URL }}
+          AMQP_URI: ${{ secrets.AMQP_URI }}
+          API_URI: ${{ secrets.API_URI }}
 
       - name: Save DigitalOcean kubeconfig with short-lived credentials
         run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 cards
