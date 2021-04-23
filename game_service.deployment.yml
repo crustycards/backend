@@ -26,7 +26,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: game_service
+  name: game-service
   annotations:
     service.beta.kubernetes.io/do-loadbalancer-hostname: "game.crusty.cards"
 spec:
