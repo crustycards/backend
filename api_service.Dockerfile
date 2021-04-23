@@ -16,7 +16,7 @@ RUN \
     mkdir -p /build-out &&\
     cp target/release/api_service /build-out/
 
-FROM alpine:latest
+FROM debian:10-slim
 COPY --from=build /build-out/api_service /
 EXPOSE 50052
 CMD /api_service
