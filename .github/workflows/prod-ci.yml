@@ -26,7 +26,7 @@ jobs:
           rustup component add clippy
           cargo fmt -- --check
           cargo clippy
-  deploy:
+  deploy_api_service:
     needs: build_and_test
     runs-on: ubuntu-latest
     environment: production
@@ -39,21 +39,13 @@ jobs:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
       - name: Build container images
-        run: |
-          docker build -t registry.digitalocean.com/cards/api_service:$(echo $GITHUB_SHA | head -c7) -f api_service.Dockerfile .
-          docker build -t registry.digitalocean.com/cards/game_service:$(echo $GITHUB_SHA | head -c7) -f game_service.Dockerfile .
+        run: docker build -t registry.digitalocean.com/cards/api_service:$(echo $GITHUB_SHA | head -c7) -f api_service.Dockerfile .
 
       - name: Log in to DigitalOcean Container Registry with short-lived credentials
         run: doctl registry login --expiry-seconds 1200
 
-      # TODO - Remove this step. It is here only for logging purposes.
-      - name: List DigitalOcean certificates
-        run: doctl compute certificate list
-
       - name: Push images to DigitalOcean Container Registry
-        run: |
-          docker push registry.digitalocean.com/cards/api_service:$(echo $GITHUB_SHA | head -c7)
-          docker push registry.digitalocean.com/cards/game_service:$(echo $GITHUB_SHA | head -c7)
+        run: docker push registry.digitalocean.com/cards/api_service:$(echo $GITHUB_SHA | head -c7)
 
       - name: Update deployment files
         run: |
@@ -61,6 +53,38 @@ jobs:
           sed -i 's|<IMAGE>|registry.digitalocean.com/cards/api_service:'${TAG}'|' $GITHUB_WORKSPACE/api_service.deployment.yml
           sed -i 's|<MONGO_URI>|'${MONGO_URI}'|' $GITHUB_WORKSPACE/api_service.deployment.yml
           sed -i 's|<SONIC_URI>|'${SONIC_URI}'|' $GITHUB_WORKSPACE/api_service.deployment.yml
+
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 cards
+
+      - name: Deploy to DigitalOcean Kubernetes
+        run: kubectl apply -f $GITHUB_WORKSPACE/api_service.deployment.yml
+
+      - name: Verify deployment
+        run: kubectl rollout status deployment/api_service
+  deploy_game_service:
+    needs: build_and_test
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Build container images
+        run: docker build -t registry.digitalocean.com/cards/game_service:$(echo $GITHUB_SHA | head -c7) -f game_service.Dockerfile .
+
+      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+        run: doctl registry login --expiry-seconds 1200
+
+      - name: Push images to DigitalOcean Container Registry
+        run: docker push registry.digitalocean.com/cards/game_service:$(echo $GITHUB_SHA | head -c7)
+
+      - name: Update deployment files
+        run: |
           TAG=$(echo $GITHUB_SHA | head -c7)
           sed -i 's|<IMAGE>|registry.digitalocean.com/cards/game_service:'${TAG}'|' $GITHUB_WORKSPACE/game_service.deployment.yml
           sed -i 's|<AMQP_URI>|'${AMQP_URI}'|' $GITHUB_WORKSPACE/game_service.deployment.yml
@@ -70,31 +94,7 @@ jobs:
         run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 cards
 
       - name: Deploy to DigitalOcean Kubernetes
-        run: |
-          kubectl apply -f $GITHUB_WORKSPACE/api_service.deployment.yml
-          kubectl apply -f $GITHUB_WORKSPACE/game_service.deployment.yml
-  verify_api_service_rollout:
-    needs: deploy
-    runs-on: ubuntu-latest
-    environment: production
-    steps:
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2
-        with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-
-      - name: Verify deployment
-        run: kubectl rollout status deployment/api_service
-  verify_game_service_rollout:
-    needs: deploy
-    runs-on: ubuntu-latest
-    environment: production
-    steps:
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2
-        with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+        run: kubectl apply -f $GITHUB_WORKSPACE/game_service.deployment.yml
 
       - name: Verify deployment
         run: kubectl rollout status deployment/game_service
-
