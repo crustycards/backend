@@ -61,7 +61,7 @@ jobs:
         run: kubectl apply -f $GITHUB_WORKSPACE/api_service.deployment.yml
 
       - name: Verify deployment
-        run: kubectl rollout status deployment/api_service
+        run: kubectl rollout status deployment/api
   deploy_game_service:
     needs: build_and_test
     runs-on: ubuntu-latest
@@ -97,4 +97,4 @@ jobs:
         run: kubectl apply -f $GITHUB_WORKSPACE/game_service.deployment.yml
 
       - name: Verify deployment
-        run: kubectl rollout status deployment/game_service
+        run: kubectl rollout status deployment/game
