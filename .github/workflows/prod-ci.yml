@@ -52,6 +52,7 @@ jobs:
           TAG=$(echo $GITHUB_SHA | head -c7)
           sed -i 's|<IMAGE>|registry.digitalocean.com/cards/api_service:'${TAG}'|' $GITHUB_WORKSPACE/api_service.deployment.yml
           sed -i 's|<MONGO_URI>|'${MONGO_URI}'|' $GITHUB_WORKSPACE/api_service.deployment.yml
+          sed -i 's|<MONGO_URI>|\&|' ./api_service.deployment.yml
           sed -i 's|<SONIC_URI>|'${SONIC_URI}'|' $GITHUB_WORKSPACE/api_service.deployment.yml
         env:
           MONGO_URI: ${{ secrets.MONGO_URI }}
