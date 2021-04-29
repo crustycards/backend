@@ -1,9 +1,10 @@
 use super::constants::*;
-use super::proto::{
+use super::proto::crusty_cards_api::{
     game_config::blank_white_card_config::Behavior,
     game_config::{BlankWhiteCardConfig, EndCondition},
     CustomBlackCard, CustomWhiteCard, DefaultBlackCard, DefaultWhiteCard, GameConfig,
 };
+use super::proto::google::protobuf::Empty;
 
 pub fn generate_test_custom_black_cards(count: usize) -> Vec<CustomBlackCard> {
     let mut cards = Vec::new();
@@ -69,7 +70,7 @@ pub fn get_valid_endless_test_game_config() -> GameConfig {
     GameConfig {
         display_name: String::from("Test Game"),
         max_players: MINIMUM_PLAYERS_REQUIRED_TO_PLAY as i32,
-        end_condition: Some(EndCondition::EndlessMode(())),
+        end_condition: Some(EndCondition::EndlessMode(Empty {})),
         hand_size: MIN_HAND_SIZE_LIMIT,
         custom_cardpack_names: vec![String::from("test_custom_cardpack_name")],
         default_cardpack_names: vec![String::from("test_default_cardpack_name")],

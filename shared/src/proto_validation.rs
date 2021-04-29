@@ -1,7 +1,7 @@
 use super::basic_validation::{BoundedNumberField, ValidatedStringField};
 use super::constants::*;
 use super::grpc_error::empty_request_field_error;
-use super::proto::{
+use super::proto::crusty_cards_api::{
     game_config::{
         blank_white_card_config::{Behavior, BlankWhiteCardsAdded},
         BlankWhiteCardConfig, EndCondition,
@@ -9,6 +9,7 @@ use super::proto::{
     user_settings::ColorScheme,
     GameConfig, OAuthCredentials,
 };
+use super::proto::google::protobuf::Empty;
 use tonic::Status;
 
 pub struct ValidatedOAuthCredentials {
@@ -162,7 +163,7 @@ impl ValidatedGameConfig {
             Some(end_condition) => {
                 match end_condition {
                     EndCondition::EndlessMode(_) => {
-                        EndCondition::EndlessMode(())
+                        EndCondition::EndlessMode(Empty {})
                     },
                     EndCondition::MaxScore(max_score) => {
                         if max_score > &MAX_SCORE_LIMIT {

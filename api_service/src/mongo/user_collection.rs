@@ -3,12 +3,13 @@ use bson::{doc, document::ValueAccessError, Bson, Document};
 use futures_lite::{Stream, StreamExt};
 use mockall::automock;
 use mongodb::Collection;
-use prost_types::Timestamp;
 use shared::basic_validation::ValidatedStringField;
-use shared::proto::game_config::{
+use shared::proto::crusty_cards_api::game_config::{
     blank_white_card_config::BlankWhiteCardsAdded, BlankWhiteCardConfig, EndCondition,
 };
-use shared::proto::*;
+use shared::proto::crusty_cards_api::*;
+use shared::proto::google::protobuf::Empty;
+use shared::proto::google::protobuf::Timestamp;
 use shared::proto_validation::{
     BoundedPageSize, OptionalField, ValidatedColorScheme, ValidatedGameConfig,
     ValidatedOAuthCredentials,
@@ -673,7 +674,7 @@ fn document_to_game_config(doc: &Document) -> GameConfig {
     }
 
     if doc.get_bool("endlessMode").is_ok() {
-        end_condition = Some(EndCondition::EndlessMode(()));
+        end_condition = Some(EndCondition::EndlessMode(Empty {}));
     }
 
     GameConfig {

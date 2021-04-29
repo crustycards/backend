@@ -3,8 +3,8 @@ use super::super::search_client::SearchClient;
 use super::helper::*;
 use super::profile_image_handler::ProfileImageHandler;
 use shared::basic_validation::ValidatedStringField;
-use shared::proto::user_service_server::UserService;
-use shared::proto::*;
+use shared::proto::crusty_cards_api::user_service_server::UserService;
+use shared::proto::crusty_cards_api::*;
 use shared::proto_validation::{
     OptionalField, ValidatedColorScheme, ValidatedGameConfig, ValidatedOAuthCredentials,
 };

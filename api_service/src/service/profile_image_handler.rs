@@ -1,5 +1,5 @@
 use dashmap::DashMap;
-use shared::proto::UserProfileImage;
+use shared::proto::crusty_cards_api::UserProfileImage;
 use shared::resource_name::*;
 
 // TODO - Rather than storing profile images locally, let's connect this to an Amazon S3 instance.
