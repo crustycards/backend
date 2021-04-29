@@ -1,5 +1,5 @@
+use super::proto::google::protobuf::Timestamp;
 use bson::oid::ObjectId;
-use prost_types::Timestamp;
 use std::time::{Duration, SystemTime};
 
 pub fn object_id_to_timestamp_proto(object_id: &ObjectId) -> Timestamp {

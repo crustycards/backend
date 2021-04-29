@@ -1,6 +1,6 @@
 mod hardcoded_data;
 use sha2::{Digest, Sha256};
-use shared::proto::{DefaultBlackCard, DefaultCardpack, DefaultWhiteCard};
+use shared::proto::crusty_cards_api::{DefaultBlackCard, DefaultCardpack, DefaultWhiteCard};
 use shared::resource_name::DefaultCardpackName;
 use std::collections::HashMap;
 use std::sync::Arc;

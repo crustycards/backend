@@ -1,6 +1,6 @@
 use rand::seq::SliceRandom;
 use rand::thread_rng;
-use shared::proto::{
+use shared::proto::crusty_cards_api::{
     black_card_in_round::Card, BlackCardInRound, CustomBlackCard, DefaultBlackCard,
 };
 use tonic::Status;

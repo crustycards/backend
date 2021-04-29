@@ -9,7 +9,7 @@ use rand::prelude::SliceRandom;
 use rand::SeedableRng;
 use sha2::{Digest, Sha256};
 use shared::constants::*;
-use shared::proto::{
+use shared::proto::crusty_cards_api::{
     game_config::EndCondition, game_view::Stage, playable_white_card::Card, player::Identifier,
     ArtificialUser, ChatMessage, CustomBlackCard, CustomWhiteCard, DefaultBlackCard,
     DefaultWhiteCard, GameInfo, GameView, PastRound, PlayableWhiteCard, Player, User,
@@ -793,7 +793,7 @@ impl Game {
 mod tests {
     use super::super::super::helper::get_answer_fields_from_black_card_in_round;
     use super::*;
-    use shared::proto::GameConfig;
+    use shared::proto::crusty_cards_api::GameConfig;
     use shared::test_helper::{
         generate_test_custom_black_cards, generate_test_custom_white_cards,
         generate_test_default_black_cards, generate_test_default_white_cards,

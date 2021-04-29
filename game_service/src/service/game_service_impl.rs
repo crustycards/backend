@@ -7,7 +7,7 @@ use clokwerk::{Interval, ScheduleHandle, Scheduler};
 use shared::grpc_error::{
     empty_request_field_error, missing_request_field_error, negative_request_field_error,
 };
-use shared::proto::{
+use shared::proto::crusty_cards_api::{
     game_service_server::GameService, search_games_request::GameStageFilter,
     AddArtificialPlayerRequest, BanUserRequest, CreateChatMessageRequest, CreateGameRequest,
     GameInfo, GameView, GetGameViewRequest, JoinGameRequest, KickUserRequest, LeaveGameRequest,
@@ -16,6 +16,7 @@ use shared::proto::{
     StopGameRequest, UnbanUserRequest, UnplayCardsRequest, VoteCardRequest,
     VoteStartNextRoundRequest,
 };
+use shared::proto::google::protobuf::Empty;
 use shared::proto_validation::ValidatedGameConfig;
 use std::sync::Arc;
 use std::sync::Mutex;
@@ -305,7 +306,10 @@ impl GameService for GameServiceImpl {
         }
     }
 
-    async fn leave_game(&self, request: Request<LeaveGameRequest>) -> Result<Response<()>, Status> {
+    async fn leave_game(
+        &self,
+        request: Request<LeaveGameRequest>,
+    ) -> Result<Response<Empty>, Status> {
         if request.get_ref().user_name.is_empty() {
             return Err(empty_request_field_error("user_name"));
         }
@@ -325,7 +329,7 @@ impl GameService for GameServiceImpl {
         if game_is_empty {
             games.remove_game(&game_id);
         }
-        Ok(Response::new(()))
+        Ok(Response::new(Empty {}))
     }
 
     async fn kick_user(
@@ -658,7 +662,7 @@ impl GameService for GameServiceImpl {
 mod tests {
     use super::super::api_resource_fetcher::MockApiResourceFetcher;
     use super::*;
-    use shared::proto::{
+    use shared::proto::crusty_cards_api::{
         CustomBlackCard, CustomWhiteCard, DefaultBlackCard, DefaultWhiteCard, User,
     };
     use shared::test_helper::get_valid_test_game_config;

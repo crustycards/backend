@@ -7,9 +7,9 @@ mod service;
 use amqp::MessageQueue;
 use service::api_resource_fetcher::GrpcApiResourceFetcher;
 use service::game_service_impl::GameServiceImpl;
-use shared::proto::cardpack_service_client::CardpackServiceClient;
-use shared::proto::game_service_server::GameServiceServer;
-use shared::proto::user_service_client::UserServiceClient;
+use shared::proto::crusty_cards_api::cardpack_service_client::CardpackServiceClient;
+use shared::proto::crusty_cards_api::game_service_server::GameServiceServer;
+use shared::proto::crusty_cards_api::user_service_client::UserServiceClient;
 use tonic::transport::Server;
 
 #[tokio::main]

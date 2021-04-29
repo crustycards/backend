@@ -14,9 +14,10 @@ use service::admin_service_impl::AdminServiceImpl;
 use service::cardpack_service_impl::CardpackServiceImpl;
 use service::default_cardpacks::DefaultCardpackHandler;
 use service::user_service_impl::UserServiceImpl;
-use shared::proto::admin_service_server::AdminServiceServer;
-use shared::proto::cardpack_service_server::CardpackServiceServer;
-use shared::proto::user_service_server::UserServiceServer;
+use shared::proto::crusty_cards_api::{
+    admin_service_server::AdminServiceServer, cardpack_service_server::CardpackServiceServer,
+    user_service_server::UserServiceServer,
+};
 use std::sync::Arc;
 use tonic::transport::Server;
 

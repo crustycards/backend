@@ -1,7 +1,6 @@
 use super::super::service::helper::*;
 use bson::oid::ObjectId;
 use prost::Message;
-use prost_types::Any;
 use sha2::{Digest, Sha256};
 use tonic::Status;
 
@@ -87,7 +86,7 @@ pub fn parse_page_token_object_id(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use shared::proto::User;
+    use shared::proto::crusty_cards_api::User;
 
     #[test]
     fn test_serialize_proto_message_to_hex_string() {

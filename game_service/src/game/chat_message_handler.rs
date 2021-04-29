@@ -1,4 +1,4 @@
-use shared::proto::ChatMessage;
+use shared::proto::crusty_cards_api::ChatMessage;
 
 pub struct ChatMessageHandler {
     messages: Vec<ChatMessage>,
