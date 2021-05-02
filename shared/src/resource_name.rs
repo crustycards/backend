@@ -163,6 +163,10 @@ fn parse_three_token_name_to_object_ids(
     Ok((first_object_id, second_object_id, third_object_id))
 }
 
+macro_rules! top_level_resource_name {
+    ($struct_name:expr, $resource_path:expr) => {}
+}
+
 #[derive(Clone, Hash, PartialEq, Eq)]
 pub struct UserName {
     object_id: ObjectId,
