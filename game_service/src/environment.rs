@@ -15,7 +15,7 @@ impl EnvironmentVariables {
     fn get_env_var_or_panic(key: &str) -> String {
         match std::env::var(key) {
             Ok(value) => value,
-            _ => panic!(format!("Unable to load environment variable `{}`.", key)),
+            _ => panic!("Unable to load environment variable `{}`.", key),
         }
     }
 
