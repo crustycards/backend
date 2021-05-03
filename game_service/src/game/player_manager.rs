@@ -247,14 +247,15 @@ impl PlayerManager {
         false
     }
 
-    pub fn get_unused_default_artificial_player_name(&self) -> String {
-        loop {
-            let display_name = *ARTIFICIAL_PLAYER_DEFAULT_NAMES
-                .choose(&mut thread_rng())
-                .unwrap();
-            if !self.artificial_player_name_is_in_use(display_name) {
-                return String::from(display_name);
-            }
+    pub fn get_unused_default_artificial_player_name(&self) -> Option<String> {
+        match ARTIFICIAL_PLAYER_DEFAULT_NAMES
+            .iter()
+            .filter(|name| !self.artificial_player_name_is_in_use(name))
+            .collect::<Vec<&&str>>()
+            .choose(&mut thread_rng())
+        {
+            Some(name) => Some(String::from(**name)),
+            None => None,
         }
     }
 
@@ -394,5 +395,31 @@ impl PlayerManager {
 
     pub fn get_queued_artificial_players(&self) -> &Vec<Player> {
         &self.queued_artificial_players
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use shared::proto::ArtificialUser;
+
+    #[test]
+    fn add_too_many_artificial_players() {
+        let mut player_manager = PlayerManager::new();
+        for _ in 0..ARTIFICIAL_PLAYER_DEFAULT_NAMES.len() {
+            let name = player_manager
+                .get_unused_default_artificial_player_name()
+                .unwrap();
+            player_manager.add_player(Identifier::ArtificialUser(ArtificialUser {
+                id: name.clone(),
+                display_name: name,
+            }));
+        }
+        assert_eq!(
+            player_manager
+                .get_unused_default_artificial_player_name()
+                .is_none(),
+            true
+        );
     }
 }
