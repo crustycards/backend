@@ -356,9 +356,17 @@ impl Game {
 
         artificial_player_name = String::from(artificial_player_name.trim());
         if artificial_player_name.is_empty() {
-            artificial_player_name = self
+            artificial_player_name = match self
                 .player_manager
-                .get_unused_default_artificial_player_name();
+                .get_unused_default_artificial_player_name()
+            {
+                Some(name) => name,
+                None => {
+                    return Err(Status::invalid_argument(
+                        "No more default artificial player names available.",
+                    ))
+                }
+            };
         }
 
         let artificial_player_id = Game::generate_artificial_player_id();
