@@ -145,7 +145,7 @@ fn create_default_cardpack(index: usize, display_name: String) -> DefaultCardpac
         panic!("The `display_name` property must not be empty for instances of DefaultBlackCard");
     }
     if display_name.trim() != display_name {
-        panic!(format!("The `display_name` property must not start or end with whitespace for instances of DefaultBlackCard. Got `{}`.", display_name));
+        panic!("The `display_name` property must not start or end with whitespace for instances of DefaultBlackCard. Got `{}`.", display_name);
     }
     let default_cardpack = DefaultCardpack {
         name: format!(
@@ -167,7 +167,7 @@ fn create_default_black_card(
         panic!("The `text` property must not be empty for instances of DefaultBlackCard");
     }
     if text.trim() != text {
-        panic!(format!("The `text` property must not start or end with whitespace for instances of DefaultBlackCard. Got `{}`.", text));
+        panic!("The `text` property must not start or end with whitespace for instances of DefaultBlackCard. Got `{}`.", text);
     }
     if !(1..=3).contains(&answer_fields) {
         panic!(
@@ -198,7 +198,7 @@ fn create_default_white_card(
         panic!("The `text` property must not be empty for instances of DefaultWhiteCard");
     }
     if text.trim() != text {
-        panic!(format!("The `text` property must not start or end with whitespace for instances of DefaultWhiteCard. Got `{}`.", text));
+        panic!("The `text` property must not start or end with whitespace for instances of DefaultWhiteCard. Got `{}`.", text);
     }
     let default_white_card = DefaultWhiteCard {
         name: format!(
