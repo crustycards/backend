@@ -188,7 +188,7 @@ impl UserName {
         format!("users/{}", self.object_id.to_hex())
     }
 
-    pub fn get_object_id<'a>(&'a self) -> &'a ObjectId {
+    pub fn get_object_id(&self) -> &ObjectId {
         &self.object_id
     }
 
