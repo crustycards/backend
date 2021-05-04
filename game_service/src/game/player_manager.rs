@@ -401,7 +401,7 @@ impl PlayerManager {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use shared::proto::ArtificialUser;
+    use shared::proto::crusty_cards_api::ArtificialUser;
 
     #[test]
     fn add_too_many_artificial_players() {
