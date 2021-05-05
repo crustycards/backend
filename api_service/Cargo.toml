@@ -12,6 +12,7 @@ hex = "0.4.3"
 mockall = "0.9.1"
 mongodb = { version = "1.2.1", default-features = false, features = ["async-std-runtime"] } # TODO - Remove default-features and features, which will revert from async-std runtime to tokio. We need this right now because the current version of this dependency (at least at time of writing) is running on tokio 0.2.
 prost = "0.7.0"
+prost-types = "0.7.0"
 shared = { path = "../shared" }
 sha2 = "0.9.3"
 sonic-channel = { version = "0.4.0", features = ["search", "ingest", "control"] }

@@ -87,6 +87,7 @@ dependencies = [
  "mockall",
  "mongodb",
  "prost",
+ "prost-types",
  "sha2 0.9.3",
  "shared",
  "sonic-channel",
