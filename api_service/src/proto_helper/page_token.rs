@@ -87,7 +87,7 @@ pub fn parse_page_token_object_id(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use shared::proto::User;
+    use shared::proto::crusty_cards_api::User;
 
     #[test]
     fn test_serialize_proto_message_to_hex_string() {

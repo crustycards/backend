@@ -1,7 +1,8 @@
 use super::super::mongo::user_collection::UserCollection;
 use super::super::search_client::{IndexUserError, SearchClient};
 use futures_lite::StreamExt;
-use shared::proto::admin_service_server::AdminService;
+use shared::proto::crusty_cards_api::admin_service_server::AdminService;
+use shared::proto::google::protobuf::Empty;
 use std::sync::Arc;
 use tonic::{Request, Response, Status};
 
@@ -32,17 +33,20 @@ impl AdminServiceImpl {
 
 #[tonic::async_trait]
 impl AdminService for AdminServiceImpl {
-    async fn clear_user_search_index(&self, _request: Request<()>) -> Result<Response<()>, Status> {
+    async fn clear_user_search_index(
+        &self,
+        _request: Request<Empty>,
+    ) -> Result<Response<Empty>, Status> {
         match self.search_client.wipe_user_index() {
-            Ok(_) => Ok(Response::new(())),
+            Ok(_) => Ok(Response::new(Empty {})),
             Err(err) => Err(Self::sonic_error_to_unknown_status(err)),
         }
     }
 
     async fn refresh_user_search_index(
         &self,
-        _request: Request<()>,
-    ) -> Result<Response<()>, Status> {
+        _request: Request<Empty>,
+    ) -> Result<Response<Empty>, Status> {
         let mut user_stream = match self.user_collection.user_stream().await {
             Ok(user_stream) => user_stream,
             Err(err) => return Err(Self::mongodb_error_to_unknown_status(err)),
@@ -63,6 +67,6 @@ impl AdminService for AdminServiceImpl {
                 Err(err) => return Err(Self::mongodb_error_to_unknown_status(err)),
             };
         }
-        Ok(Response::new(()))
+        Ok(Response::new(Empty {}))
     }
 }

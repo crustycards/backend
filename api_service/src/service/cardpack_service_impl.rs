@@ -6,8 +6,9 @@ use super::super::proto_helper::page_token::*;
 use super::default_cardpacks::DefaultCardpackHandler;
 use super::helper::*;
 use shared::basic_validation::ValidatedStringField;
-use shared::proto::cardpack_service_server::CardpackService;
-use shared::proto::*;
+use shared::proto::crusty_cards_api::cardpack_service_server::CardpackService;
+use shared::proto::crusty_cards_api::*;
+use shared::proto::google::protobuf::Empty;
 use shared::proto_validation::{AnswerFieldCount, BoundedPageSize};
 use shared::resource_name::*;
 use std::collections::HashSet;
@@ -969,7 +970,7 @@ impl CardpackService for CardpackServiceImpl {
     async fn like_custom_cardpack(
         &self,
         request: Request<LikeCustomCardpackRequest>,
-    ) -> Result<Response<()>, Status> {
+    ) -> Result<Response<Empty>, Status> {
         let user_name =
             match UserName::new(&ValidatedStringField::new(&request.get_ref().user, "user")?) {
                 Ok(user_name) => user_name,
@@ -984,17 +985,17 @@ impl CardpackService for CardpackServiceImpl {
             Err(err) => return Err(err.to_status()),
         };
 
-        Ok(Response::new(
-            self.user_collection
-                .add_custom_cardpack_to_favorites(user_name, custom_cardpack_name)
-                .await?,
-        ))
+        self.user_collection
+            .add_custom_cardpack_to_favorites(user_name, custom_cardpack_name)
+            .await?;
+
+        Ok(Response::new(Empty {}))
     }
 
     async fn unlike_custom_cardpack(
         &self,
         request: Request<UnlikeCustomCardpackRequest>,
-    ) -> Result<Response<()>, Status> {
+    ) -> Result<Response<Empty>, Status> {
         let user_name =
             match UserName::new(&ValidatedStringField::new(&request.get_ref().user, "user")?) {
                 Ok(user_name) => user_name,
@@ -1009,11 +1010,11 @@ impl CardpackService for CardpackServiceImpl {
             Err(err) => return Err(err.to_status()),
         };
 
-        Ok(Response::new(
-            self.user_collection
-                .remove_custom_cardpack_from_favorites(user_name, custom_cardpack_name)
-                .await?,
-        ))
+        self.user_collection
+            .remove_custom_cardpack_from_favorites(user_name, custom_cardpack_name)
+            .await?;
+
+        Ok(Response::new(Empty {}))
     }
 
     async fn check_does_user_like_custom_cardpack(

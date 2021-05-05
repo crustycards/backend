@@ -1,10 +1,8 @@
 use async_trait::async_trait;
 use mockall::automock;
-use shared::proto::cardpack_service_client::CardpackServiceClient;
-use shared::proto::user_service_client::UserServiceClient;
-use shared::proto::GetUserRequest;
-use shared::proto::{
-    CustomBlackCard, CustomWhiteCard, DefaultBlackCard, DefaultWhiteCard,
+use shared::proto::crusty_cards_api::{
+    cardpack_service_client::CardpackServiceClient, user_service_client::UserServiceClient,
+    CustomBlackCard, CustomWhiteCard, DefaultBlackCard, DefaultWhiteCard, GetUserRequest,
     ListCustomBlackCardsRequest, ListCustomWhiteCardsRequest, ListDefaultBlackCardsRequest,
     ListDefaultWhiteCardsRequest, User,
 };

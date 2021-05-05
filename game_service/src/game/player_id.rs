@@ -1,4 +1,4 @@
-use shared::proto::{player::Identifier, Player};
+use shared::proto::crusty_cards_api::{player::Identifier, Player};
 use std::hash::Hash;
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]

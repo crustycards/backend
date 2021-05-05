@@ -1,6 +1,6 @@
 use rand::seq::SliceRandom;
 use rand::thread_rng;
-use shared::proto::{
+use shared::proto::crusty_cards_api::{
     game_config::{blank_white_card_config::BlankWhiteCardsAdded, BlankWhiteCardConfig},
     playable_white_card::Card,
     BlankWhiteCard, CustomWhiteCard, DefaultWhiteCard, PlayableWhiteCard,
@@ -156,7 +156,7 @@ impl WhiteCardDeck {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use shared::proto::game_config::blank_white_card_config::Behavior;
+    use shared::proto::crusty_cards_api::game_config::blank_white_card_config::Behavior;
 
     #[test]
     fn get_blank_white_card_count_to_add() {

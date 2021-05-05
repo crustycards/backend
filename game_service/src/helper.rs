@@ -1,4 +1,4 @@
-use shared::proto::{
+use shared::proto::crusty_cards_api::{
     black_card_in_round::Card, playable_white_card::Card as PlayableCard, BlackCardInRound,
     PlayableWhiteCard,
 };

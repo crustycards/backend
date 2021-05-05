@@ -1,2 +1,5 @@
-/shared/src/proto
+/shared/src/proto/crusty_cards_api.rs
+/shared/src/proto/google.api.rs
+/shared/src/proto/google.protobuf.rs
+
 /target

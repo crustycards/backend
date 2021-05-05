@@ -1,6 +1,6 @@
 use super::environment::EnvironmentVariables;
 use mockall::automock;
-use shared::proto::User;
+use shared::proto::crusty_cards_api::User;
 use shared::resource_name::{ParseNameError, UserName};
 use sonic_channel::*;
 
