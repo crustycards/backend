@@ -164,90 +164,44 @@ fn parse_three_token_name_to_object_ids(
 }
 
 macro_rules! top_level_resource_name {
-    ($struct_name:expr, $resource_path:expr) => {}
-}
+    ($struct_name:ident, $resource_path:expr) => {
+        #[derive(Clone, Hash, PartialEq, Eq)]
+        pub struct $struct_name {
+            object_id: ObjectId,
+        }
 
-#[derive(Clone, Hash, PartialEq, Eq)]
-pub struct UserName {
-    object_id: ObjectId,
-}
-
-impl UserName {
-    pub fn new(user_resource_name: &ValidatedStringField) -> Result<Self, ParseNameError> {
-        Self::new_from_str(user_resource_name.get_string())
-    }
-
-    pub fn new_from_str(user_resource_name: &str) -> Result<Self, ParseNameError> {
-        match parse_one_token_name_to_object_id("users/{}", user_resource_name) {
-            Ok(object_id) => Ok(Self { object_id }),
-            Err(err) => Err(err),
+        impl $struct_name {
+            pub fn new(resource_name: &ValidatedStringField) -> Result<Self, ParseNameError> {
+                Self::new_from_str(resource_name.get_string())
+            }
+        
+            pub fn new_from_str(resource_name: &str) -> Result<Self, ParseNameError> {
+                match parse_one_token_name_to_object_id($resource_path, resource_name) {
+                    Ok(object_id) => Ok(Self { object_id }),
+                    Err(err) => Err(err),
+                }
+            }
+        
+            pub fn clone_str(&self) -> String {
+                format!($resource_path, self.object_id.to_hex())
+            }
+        
+            pub fn get_object_id(&self) -> &ObjectId {
+                &self.object_id
+            }
+        
+            pub fn take_object_id(self) -> ObjectId {
+                self.object_id
+            }
         }
     }
-
-    pub fn clone_str(&self) -> String {
-        format!("users/{}", self.object_id.to_hex())
-    }
-
-    pub fn get_object_id(&self) -> &ObjectId {
-        &self.object_id
-    }
-
-    pub fn take_object_id(self) -> ObjectId {
-        self.object_id
-    }
 }
 
-#[derive(Clone, Hash, PartialEq, Eq)]
-pub struct UserSettingsName {
-    object_id: ObjectId,
-}
-
-impl UserSettingsName {
-    pub fn new(user_settings_resource_name: &ValidatedStringField) -> Result<Self, ParseNameError> {
-        match parse_one_token_name_to_object_id(
-            "users/{}/settings",
-            user_settings_resource_name.get_string(),
-        ) {
-            Ok(object_id) => Ok(Self { object_id }),
-            Err(err) => Err(err),
-        }
-    }
-
-    pub fn clone_str(&self) -> String {
-        format!("users/{}/settings", self.object_id.to_hex())
-    }
-
-    pub fn take_object_id(self) -> ObjectId {
-        self.object_id
-    }
-}
-
-#[derive(Clone, Hash, PartialEq, Eq)]
-pub struct UserProfileImageName {
-    object_id: ObjectId,
-}
+top_level_resource_name!(UserName, "users/{}");
+top_level_resource_name!(UserSettingsName, "users/{}/settings");
+top_level_resource_name!(UserProfileImageName, "users/{}/profileImage");
 
 impl UserProfileImageName {
-    pub fn new(
-        user_profile_image_resource_name: &ValidatedStringField,
-    ) -> Result<Self, ParseNameError> {
-        match parse_one_token_name_to_object_id(
-            "users/{}/profileImage",
-            user_profile_image_resource_name.get_string(),
-        ) {
-            Ok(object_id) => Ok(Self { object_id }),
-            Err(err) => Err(err),
-        }
-    }
-
-    pub fn clone_str(&self) -> String {
-        format!("users/{}/profileImage", self.object_id.to_hex())
-    }
-
-    pub fn get_object_id(&self) -> &ObjectId {
-        &self.object_id
-    }
-
     pub fn to_user_name(&self) -> UserName {
         UserName {
             object_id: self.object_id.clone(),
