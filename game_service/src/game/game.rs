@@ -942,7 +942,7 @@ mod tests {
     #[test]
     fn create_basic_game_and_add_players() {
         let game: Game = get_basic_game_with_players(MIN_PLAYER_LIMIT as usize).unwrap();
-        assert_eq!(format!("{:?}", validate_and_remove_changing_parameters_from_game_info(game.get_game_info())), "GameInfo { game_id: \"1234\", config: Some(GameConfig { display_name: \"Test Game\", max_players: 3, hand_size: 3, custom_cardpack_names: [\"test_custom_cardpack_name\"], default_cardpack_names: [\"test_default_cardpack_name\"], blank_white_card_config: Some(BlankWhiteCardConfig { behavior: Disabled, blank_white_cards_added: None }), end_condition: Some(EndlessMode(())) }), player_count: 2, owner: Some(User { name: \"users/0\", display_name: \"User users/0\", create_time: None, update_time: None }), is_running: false, create_time: None, last_activity_time: None }");
+        assert_eq!(format!("{:?}", validate_and_remove_changing_parameters_from_game_info(game.get_game_info())), "GameInfo { game_id: \"1234\", config: Some(GameConfig { display_name: \"Test Game\", max_players: 3, hand_size: 3, custom_cardpack_names: [\"test_custom_cardpack_name\"], default_cardpack_names: [\"test_default_cardpack_name\"], blank_white_card_config: Some(BlankWhiteCardConfig { behavior: Disabled, blank_white_cards_added: None }), end_condition: Some(EndlessMode(Empty)) }), player_count: 2, owner: Some(User { name: \"users/0\", display_name: \"User users/0\", create_time: None, update_time: None }), is_running: false, create_time: None, last_activity_time: None }");
     }
 
     #[test]
