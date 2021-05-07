@@ -163,7 +163,7 @@ fn parse_three_token_name_to_object_ids(
     Ok((first_object_id, second_object_id, third_object_id))
 }
 
-macro_rules! top_level_resource_name {
+macro_rules! top_level_mongo_based_resource_name {
     ($struct_name:ident, $resource_path:expr) => {
         #[derive(Clone, Hash, PartialEq, Eq)]
         pub struct $struct_name {
@@ -197,9 +197,9 @@ macro_rules! top_level_resource_name {
     };
 }
 
-top_level_resource_name!(UserName, "users/{}");
-top_level_resource_name!(UserSettingsName, "users/{}/settings");
-top_level_resource_name!(UserProfileImageName, "users/{}/profileImage");
+top_level_mongo_based_resource_name!(UserName, "users/{}");
+top_level_mongo_based_resource_name!(UserSettingsName, "users/{}/settings");
+top_level_mongo_based_resource_name!(UserProfileImageName, "users/{}/profileImage");
 
 impl UserProfileImageName {
     pub fn to_user_name(&self) -> UserName {
