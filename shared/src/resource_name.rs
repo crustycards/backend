@@ -174,27 +174,27 @@ macro_rules! top_level_resource_name {
             pub fn new(resource_name: &ValidatedStringField) -> Result<Self, ParseNameError> {
                 Self::new_from_str(resource_name.get_string())
             }
-        
+
             pub fn new_from_str(resource_name: &str) -> Result<Self, ParseNameError> {
                 match parse_one_token_name_to_object_id($resource_path, resource_name) {
                     Ok(object_id) => Ok(Self { object_id }),
                     Err(err) => Err(err),
                 }
             }
-        
+
             pub fn clone_str(&self) -> String {
                 format!($resource_path, self.object_id.to_hex())
             }
-        
+
             pub fn get_object_id(&self) -> &ObjectId {
                 &self.object_id
             }
-        
+
             pub fn take_object_id(self) -> ObjectId {
                 self.object_id
             }
         }
-    }
+    };
 }
 
 top_level_resource_name!(UserName, "users/{}");
