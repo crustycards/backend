@@ -3,6 +3,11 @@ name = "shared"
 version = "0.1.0"
 authors = ["Tommy Volk <tvolk131@gmail.com>"]
 edition = "2018"
+exclude = ["./proto/**/*.rs"]
+
+# TODO - Find a way to remove this. We need it because otherwise, the comments in prost generated wellknown types are interpreted as failing doc-tests.
+[lib]
+doctest = false
 
 [dependencies]
 bson = "1.2.2"
