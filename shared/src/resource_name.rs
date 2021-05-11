@@ -251,7 +251,7 @@ impl CustomCardpackName {
         )
     }
 
-    pub fn get_object_ids<'a>(&'a self) -> (&'a ObjectId, &'a ObjectId) {
+    pub fn get_object_ids(&self) -> (&ObjectId, &ObjectId) {
         (&self.parent_user_object_id, &self.object_id)
     }
 
