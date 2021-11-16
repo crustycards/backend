@@ -78,7 +78,7 @@ pub fn parse_page_token_object_id(
     request_page_token: &str,
 ) -> Result<ObjectId, Status> {
     let page_token = parse_page_token_string(request_message, request_page_token)?;
-    match ObjectId::with_string(&page_token) {
+    match ObjectId::parse_str(&page_token) {
         Ok(object_id) => Ok(object_id),
         Err(_) => Err(invalid_page_token_error()),
     }
@@ -168,7 +168,7 @@ mod tests {
         // Can parse page token created from valid object id.
         let page_token = create_page_token(
             &user,
-            ObjectId::with_string("5fd07c5000eb828800a3bfa5")
+            ObjectId::parse_str("5fd07c5000eb828800a3bfa5")
                 .unwrap()
                 .to_hex(),
         );

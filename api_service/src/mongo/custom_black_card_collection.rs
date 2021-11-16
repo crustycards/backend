@@ -78,11 +78,11 @@ pub trait CustomBlackCardCollection: Send + Sync {
 }
 
 pub struct MongoCustomBlackCardCollection {
-    collection: Collection,
+    collection: Collection<Document>,
 }
 
 impl MongoCustomBlackCardCollection {
-    pub fn new(collection: Collection) -> Self {
+    pub fn new(collection: Collection<Document>) -> Self {
         // TODO - Setup indexes here.
         Self { collection }
     }
@@ -383,17 +383,17 @@ fn document_to_custom_black_card(doc: &Document) -> CustomBlackCard {
         answer_fields: doc.get_i32("answerFields").unwrap_or(0),
         create_time: match doc.get_object_id("_id") {
             Ok(object_id) => Some(Timestamp {
-                seconds: object_id.timestamp().timestamp(),
+                seconds: object_id.timestamp().to_chrono().timestamp(),
                 nanos: 0,
             }),
             _ => None,
         },
         update_time: match doc.get_datetime("updateTime") {
-            Ok(update_time) => Some(chrono_timestamp_to_timestamp_proto(update_time)),
+            Ok(update_time) => Some(chrono_timestamp_to_timestamp_proto(&update_time.to_chrono())),
             _ => None,
         },
         delete_time: match doc.get_datetime("deleteTime") {
-            Ok(delete_time) => Some(chrono_timestamp_to_timestamp_proto(delete_time)),
+            Ok(delete_time) => Some(chrono_timestamp_to_timestamp_proto(&delete_time.to_chrono())),
             _ => None,
         },
     }

@@ -5,12 +5,12 @@ authors = ["Tommy Volk <tvolk131@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-bson = "1.2.2"
+bson = { version = "2.0.1", features = ["chrono-0_4"] }
 dashmap = "4.0.2"
 futures-lite = "1.11.3"
 hex = "0.4.3"
 mockall = "0.9.1"
-mongodb = { version = "1.2.1", default-features = false, features = ["async-std-runtime"] } # TODO - Remove default-features and features, which will revert from async-std runtime to tokio. We need this right now because the current version of this dependency (at least at time of writing) is running on tokio 0.2.
+mongodb = { version = "2.0.2", default-features = false, features = ["async-std-runtime"] } # TODO - Remove default-features and features, which will revert from async-std runtime to tokio. We need this right now because the current version of this dependency (at least at time of writing) is running on tokio 0.2.
 prost = "0.7.0"
 prost-types = "0.7.0"
 shared = { path = "../shared" }

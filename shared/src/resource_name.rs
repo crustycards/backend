@@ -95,7 +95,7 @@ fn parse_one_token_name_to_object_id(format: &str, path: &str) -> Result<ObjectI
         Err(err) => return Err(err),
     };
 
-    match ObjectId::with_string(&id_string) {
+    match ObjectId::parse_str(&id_string) {
         Ok(object_id) => Ok(object_id),
         _ => Err(ParseNameError::ObjectIdParseError(path.to_string())),
     }
@@ -119,11 +119,11 @@ fn parse_two_token_name_to_object_ids(
 
     // Unwraps are safe here because we checked
     // that `tokens` contains exactly two elements.
-    let first_object_id = match ObjectId::with_string(tokens.get(0).unwrap()) {
+    let first_object_id = match ObjectId::parse_str(tokens.get(0).unwrap()) {
         Ok(object_id) => object_id,
         _ => return Err(ParseNameError::ObjectIdParseError(path.to_string())),
     };
-    let second_object_id = match ObjectId::with_string(tokens.get(1).unwrap()) {
+    let second_object_id = match ObjectId::parse_str(tokens.get(1).unwrap()) {
         Ok(object_id) => object_id,
         _ => return Err(ParseNameError::ObjectIdParseError(path.to_string())),
     };
@@ -148,15 +148,15 @@ fn parse_three_token_name_to_object_ids(
 
     // Unwraps are safe here because we checked
     // that `tokens` contains exactly three elements.
-    let first_object_id = match ObjectId::with_string(tokens.get(0).unwrap()) {
+    let first_object_id = match ObjectId::parse_str(tokens.get(0).unwrap()) {
         Ok(object_id) => object_id,
         _ => return Err(ParseNameError::ObjectIdParseError(path.to_string())),
     };
-    let second_object_id = match ObjectId::with_string(tokens.get(1).unwrap()) {
+    let second_object_id = match ObjectId::parse_str(tokens.get(1).unwrap()) {
         Ok(object_id) => object_id,
         _ => return Err(ParseNameError::ObjectIdParseError(path.to_string())),
     };
-    let third_object_id = match ObjectId::with_string(tokens.get(2).unwrap()) {
+    let third_object_id = match ObjectId::parse_str(tokens.get(2).unwrap()) {
         Ok(object_id) => object_id,
         _ => return Err(ParseNameError::ObjectIdParseError(path.to_string())),
     };

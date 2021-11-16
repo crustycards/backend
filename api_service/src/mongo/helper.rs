@@ -25,7 +25,7 @@ pub fn resource_not_found_error(resource_name: &str) -> Status {
 }
 
 pub async fn list_items<T>(
-    collection: &Collection,
+    collection: &Collection<Document>,
     mut find_doc: Document,
     projection_doc: Document,
     page_size: BoundedPageSize,
@@ -35,7 +35,7 @@ pub async fn list_items<T>(
     let page_size_i64 = page_size.take_i64();
 
     let matching_doc_count = match collection.count_documents(find_doc.clone(), None).await {
-        Ok(count) => count,
+        Ok(count) => count as i64,
         _ => return Err(Status::unknown("Failed to fetch cardpacks.")),
     };
 

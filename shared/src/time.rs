@@ -3,7 +3,7 @@ use bson::oid::ObjectId;
 use std::time::{Duration, SystemTime};
 
 pub fn object_id_to_timestamp_proto(object_id: &ObjectId) -> Timestamp {
-    chrono_timestamp_to_timestamp_proto(&object_id.timestamp())
+    chrono_timestamp_to_timestamp_proto(&object_id.timestamp().into())
 }
 
 pub fn chrono_timestamp_to_timestamp_proto(
@@ -71,7 +71,7 @@ mod tests {
 
     #[test]
     fn test_object_id_to_timestamp_proto() {
-        let object_id = ObjectId::with_string("507c7f79bcf86cd7994f6c0e").unwrap();
+        let object_id = ObjectId::parse_str("507c7f79bcf86cd7994f6c0e").unwrap();
         let timestamp = object_id_to_timestamp_proto(&object_id);
         assert_eq!(
             timestamp,
@@ -86,7 +86,7 @@ mod tests {
     fn test_chrono_timestamp_to_timestamp_proto() {
         let mut utc_date_time =
             DateTime::<Utc>::from_utc(NaiveDateTime::from_timestamp(1350336377, 1234), Utc);
-        let mut timestamp = chrono_timestamp_to_timestamp_proto(&utc_date_time);
+        let mut timestamp = chrono_timestamp_to_timestamp_proto(&utc_date_time.into());
         assert_eq!(
             timestamp,
             Timestamp {
@@ -96,7 +96,7 @@ mod tests {
         );
         utc_date_time =
             DateTime::<Utc>::from_utc(NaiveDateTime::from_timestamp(1, 1234567890), Utc);
-        timestamp = chrono_timestamp_to_timestamp_proto(&utc_date_time);
+        timestamp = chrono_timestamp_to_timestamp_proto(&utc_date_time.into());
         assert_eq!(
             timestamp,
             Timestamp {

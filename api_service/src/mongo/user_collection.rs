@@ -110,11 +110,11 @@ pub trait UserCollection: Send + Sync {
 }
 
 pub struct MongoUserCollection {
-    collection: Collection,
+    collection: Collection<Document>,
 }
 
 impl MongoUserCollection {
-    pub fn new(collection: Collection) -> Self {
+    pub fn new(collection: Collection<Document>) -> Self {
         // TODO - Setup indexes here.
         Self { collection }
     }
@@ -538,13 +538,13 @@ fn document_to_user(doc: &Document) -> User {
         display_name: String::from(doc.get_str("displayName").unwrap_or("")),
         create_time: match doc.get_object_id("_id") {
             Ok(object_id) => Some(Timestamp {
-                seconds: object_id.timestamp().timestamp(),
+                seconds: object_id.timestamp().to_chrono().timestamp(),
                 nanos: 0,
             }),
             _ => None,
         },
         update_time: match doc.get_datetime("updateTime") {
-            Ok(update_time) => Some(chrono_timestamp_to_timestamp_proto(update_time)),
+            Ok(update_time) => Some(chrono_timestamp_to_timestamp_proto(&update_time.to_chrono())),
             _ => None,
         },
     }
