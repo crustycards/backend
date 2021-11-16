@@ -337,8 +337,8 @@ impl Game {
                 self.stage = Stage::RoundEndPhase;
             }
         }
-        self.player_manager.remove_player(&player_id);
-        self.white_card_gameplay_manager.remove_player(&player_id);
+        self.player_manager.remove_player(player_id);
+        self.white_card_gameplay_manager.remove_player(player_id);
 
         self.stop_if_not_enough_players();
     }
@@ -561,19 +561,16 @@ impl Game {
             None => return Err(Status::invalid_argument("Invalid selection.")),
         };
 
-        let winner_or = &(voted_cards).player;
+        let winner_or = &voted_cards.player;
         if let Some(winner) = &winner_or {
-            if let Some(winner_id) = PlayerId::from_player_proto(&winner) {
+            if let Some(winner_id) = PlayerId::from_player_proto(winner) {
                 self.increment_score_and_maybe_stop_game(&winner_id);
             }
         }
 
         self.stage = Stage::RoundEndPhase;
 
-        self.winner = match winner_or.as_ref() {
-            Some(winner) => Some(winner.clone()), // TODO - I don't think we need to clone `winner` here. Let's find a way to move it from `winner_or` above instead.
-            None => None,
-        };
+        self.winner = winner_or.clone(); // TODO - I don't think we need to clone `winner` here. Let's find a way to move it from `winner_or` above instead.
 
         self.update_last_activity_time();
         Ok(())
@@ -595,14 +592,8 @@ impl Game {
         let round = PastRound {
             black_card: Some(self.black_card_deck.get_current_black_card().clone()),
             white_played: self.get_pseudorandom_ordered_white_cards_played_list(),
-            judge: match self.player_manager.get_judge() {
-                Some(judge) => Some(judge.clone()),
-                None => None,
-            },
-            winner: match &self.winner {
-                Some(winner) => Some(winner.clone()),
-                None => None,
-            },
+            judge: self.player_manager.get_judge().cloned(),
+            winner: self.winner.as_ref().cloned(),
         };
         self.past_rounds.push(round);
 
@@ -662,14 +653,8 @@ impl Game {
                 .player_manager
                 .clone_all_queued_players_sorted_by_join_time(),
             banned_users: self.banned_users.clone(),
-            judge: match self.player_manager.get_judge() {
-                Some(judge) => Some(judge.clone()),
-                None => None,
-            },
-            owner: match self.player_manager.get_owner() {
-                Some(owner) => Some(owner.clone()),
-                None => None,
-            },
+            judge: self.player_manager.get_judge().cloned(),
+            owner: self.player_manager.get_owner().cloned(),
             white_played: {
                 let mut played_cards = self.get_pseudorandom_ordered_white_cards_played_list();
                 match self.stage {
@@ -692,10 +677,7 @@ impl Game {
             } else {
                 None
             },
-            winner: match &self.winner {
-                Some(winner) => Some(winner.clone()),
-                None => None,
-            },
+            winner: self.winner.as_ref().cloned(),
             chat_messages: self.chat_messages.clone_message_list(),
             past_rounds: self.past_rounds.clone(),
             create_time: Some(system_time_to_timestamp_proto(&self.create_time)),
@@ -708,10 +690,7 @@ impl Game {
             game_id: String::from(&self.game_id),
             config: Some(self.config.raw_config()),
             player_count: self.player_manager.get_real_players().len() as i32,
-            owner: match self.player_manager.get_owner() {
-                Some(owner) => Some(owner.clone()),
-                None => None,
-            },
+            owner: self.player_manager.get_owner().cloned(),
             is_running: self.is_running(),
             create_time: Some(system_time_to_timestamp_proto(&self.create_time)),
             last_activity_time: Some(system_time_to_timestamp_proto(&self.last_activity_time)),
@@ -764,10 +743,7 @@ impl Game {
             }
 
             let white_played_entry = WhiteCardsPlayed {
-                player: match self.player_manager.get_player(player_id) {
-                    Some(player) => Some(player.clone()),
-                    None => None,
-                },
+                player: self.player_manager.get_player(player_id).cloned(),
                 card_texts,
             };
 

@@ -183,7 +183,7 @@ impl CustomCardpackCollection for MongoCustomCardpackCollection {
             .enumerate()
             .map(|(index, display_name)| {
                 let inserted_object_id = match inserted_object_ids.get(&index) {
-                    Some(oid) => oid.clone(),
+                    Some(oid) => *oid,
                     None => return None,
                 };
                 let create_time = object_id_to_timestamp_proto(&inserted_object_id);
@@ -363,12 +363,9 @@ impl CustomCardpackCollection for MongoCustomCardpackCollection {
                 _ => None,
             })
             .collect();
-        let custom_cardpacks: Vec<CustomCardpack> = docs
+        let custom_cardpacks_map: HashMap<CustomCardpackName, CustomCardpack> = docs
             .iter()
             .map(|doc| document_to_custom_cardpack(doc))
-            .collect();
-        let custom_cardpacks_map: HashMap<CustomCardpackName, CustomCardpack> = custom_cardpacks
-            .into_iter()
             .filter_map(|custom_cardpack| {
                 match CustomCardpackName::new_from_str(&custom_cardpack.name) {
                     Ok(custom_cardpack_name) => Some((custom_cardpack_name, custom_cardpack)),
@@ -378,12 +375,7 @@ impl CustomCardpackCollection for MongoCustomCardpackCollection {
             .collect();
         Ok(names
             .iter()
-            .map(
-                |custom_cardpack_name| match custom_cardpacks_map.get(custom_cardpack_name) {
-                    Some(custom_cardpack) => Some(custom_cardpack.clone()),
-                    None => None,
-                },
-            )
+            .map(|custom_cardpack_name| custom_cardpacks_map.get(custom_cardpack_name).cloned())
             .collect())
     }
 

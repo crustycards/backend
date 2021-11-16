@@ -61,7 +61,7 @@ impl SonicSearchClient {
 
 impl SearchClient for SonicSearchClient {
     fn index_user(&self, user: &User, overwrite: bool) -> Result<(), IndexUserError> {
-        let user_text_tokens = match Self::get_user_text_tokens(&user) {
+        let user_text_tokens = match Self::get_user_text_tokens(user) {
             Ok(tokens) => tokens,
             Err(err) => return Err(IndexUserError::ParseNameError(err)),
         };

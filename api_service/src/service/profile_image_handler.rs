@@ -42,7 +42,7 @@ impl ProfileImageHandler {
     ) -> UserProfileImage {
         self.profile_images
             .remove(&user_profile_image_name.get_object_id().to_hex());
-        Self::empty_profile_image(&user_profile_image_name)
+        Self::empty_profile_image(user_profile_image_name)
     }
 
     pub fn get_profile_image(
@@ -54,7 +54,7 @@ impl ProfileImageHandler {
             .get(&user_profile_image_name.get_object_id().to_hex())
         {
             Some(entry) => entry.value().clone(),
-            None => return Self::empty_profile_image(&user_profile_image_name),
+            None => return Self::empty_profile_image(user_profile_image_name),
         };
         UserProfileImage {
             name: user_profile_image_name.clone_str(),

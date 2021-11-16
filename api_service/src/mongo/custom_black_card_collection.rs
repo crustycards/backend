@@ -183,7 +183,7 @@ impl CustomBlackCardCollection for MongoCustomBlackCardCollection {
             .enumerate()
             .map(|(index, (card_text, answer_field_count))| {
                 let inserted_object_id = match inserted_object_ids.get(&index) {
-                    Some(oid) => oid.clone(),
+                    Some(oid) => *oid,
                     None => return None,
                 };
                 let create_time = object_id_to_timestamp_proto(&inserted_object_id);

@@ -14,7 +14,7 @@ pub async fn get_mongo_database_or_panic(env_vars: &EnvironmentVariables) -> Dat
         _ => panic!("Failed to connect to MongoDB."),
     };
 
-    mongo_client.database(&env_vars.get_mongo_database())
+    mongo_client.database(env_vars.get_mongo_database())
 }
 
 pub fn resource_not_found_error(resource_name: &str) -> Status {
@@ -69,7 +69,7 @@ pub async fn list_items<T>(
             None => return Err(Status::unknown("Failed to fetch items.")),
         };
         match last_doc.get_object_id("_id") {
-            Ok(object_id) => Some(object_id.clone()),
+            Ok(object_id) => Some(object_id),
             _ => return Err(Status::unknown("Failed to fetch items.")),
         }
     } else {

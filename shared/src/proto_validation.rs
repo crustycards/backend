@@ -55,7 +55,7 @@ impl AnswerFieldCount {
     }
 
     pub fn get_count(&self) -> &i32 {
-        &self.count.get_value()
+        self.count.get_value()
     }
 
     pub fn take_count(self) -> i32 {

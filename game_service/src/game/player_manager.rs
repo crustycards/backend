@@ -72,14 +72,14 @@ impl PlayerManager {
     // score, or returns None if passed a PlayerId that's invalid or that
     // belongs to a user that is not in the game.
     pub fn increment_player_score(&mut self, player_id: &PlayerId) -> Option<i32> {
-        let player = self.get_mut_player(&player_id)?;
+        let player = self.get_mut_player(player_id)?;
         let incremented_score = player.score + 1;
         player.score = incremented_score;
         Some(incremented_score)
     }
 
     pub fn get_player_score(&self, player_id: &PlayerId) -> Option<i32> {
-        Some(self.get_player(&player_id)?.score)
+        Some(self.get_player(player_id)?.score)
     }
 
     fn get_mut_player(&mut self, player_id: &PlayerId) -> Option<&mut Player> {
@@ -248,15 +248,12 @@ impl PlayerManager {
     }
 
     pub fn get_unused_default_artificial_player_name(&self) -> Option<String> {
-        match ARTIFICIAL_PLAYER_DEFAULT_NAMES
+        ARTIFICIAL_PLAYER_DEFAULT_NAMES
             .iter()
             .filter(|name| !self.artificial_player_name_is_in_use(name))
             .collect::<Vec<&&str>>()
             .choose(&mut thread_rng())
-        {
-            Some(name) => Some(String::from(**name)),
-            None => None,
-        }
+            .map(|name| String::from(**name))
     }
 
     pub fn user_is_in_game(&self, user_name: &str) -> bool {

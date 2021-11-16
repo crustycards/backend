@@ -277,7 +277,7 @@ impl UserService for UserServiceImpl {
             _ => return Err(Status::unknown("Failed to fetch search results.")),
         }
         .into_iter()
-        .filter_map(|user_or| user_or)
+        .flatten()
         .collect();
         Ok(Response::new(UserSearchResponse { users }))
     }

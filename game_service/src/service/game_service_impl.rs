@@ -163,7 +163,7 @@ impl GameService for GameServiceImpl {
         let (black_cards, white_cards) = match self
             .resource_fetcher
             .get_custom_cards_from_multiple_custom_cardpacks(
-                &validated_game_config.get_custom_cardpack_names(),
+                validated_game_config.get_custom_cardpack_names(),
             )
             .await
         {
@@ -174,7 +174,7 @@ impl GameService for GameServiceImpl {
         let (default_black_cards, default_white_cards) = match self
             .resource_fetcher
             .get_default_cards_from_multiple_default_cardpacks(
-                &validated_game_config.get_default_cardpack_names(),
+                validated_game_config.get_default_cardpack_names(),
             )
             .await
         {

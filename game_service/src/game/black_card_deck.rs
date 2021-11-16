@@ -47,7 +47,7 @@ impl BlackCardDeck {
         // Unwrap is safe here because the constructor guarantees that there is at least
         // one card in the deck, and all mutating methods guarantee that there's always
         // a card in the draw pile.
-        &self.draw_pile.last().unwrap()
+        self.draw_pile.last().unwrap()
     }
 
     pub fn next_card(&mut self) {

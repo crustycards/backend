@@ -377,8 +377,9 @@ impl UserCollection for MongoUserCollection {
                 _ => None,
             })
             .collect();
-        let users: Vec<User> = docs.iter().map(|doc| document_to_user(doc)).collect();
-        let users_map: HashMap<UserName, User> = users
+        let users_map: HashMap<UserName, User> = docs
+            .iter()
+            .map(|doc| document_to_user(doc))
             .into_iter()
             .filter_map(|user| match UserName::new_from_str(&user.name) {
                 Ok(user_name) => Some((user_name, user)),
@@ -387,10 +388,7 @@ impl UserCollection for MongoUserCollection {
             .collect();
         Ok(names
             .iter()
-            .map(|user_name| match users_map.get(user_name) {
-                Some(user) => Some(user.clone()),
-                None => None,
-            })
+            .map(|user_name| users_map.get(user_name).cloned())
             .collect())
     }
 

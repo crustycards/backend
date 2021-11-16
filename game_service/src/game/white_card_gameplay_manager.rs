@@ -38,7 +38,7 @@ impl WhiteCardGameplayManager {
     }
 
     pub fn remove_player(&mut self, player_id: &PlayerId) {
-        if let Some(mut hand) = self.hands_and_played_cards.remove(&player_id) {
+        if let Some(mut hand) = self.hands_and_played_cards.remove(player_id) {
             self.white_card_deck.discard_many(&mut hand);
         }
     }
@@ -90,7 +90,7 @@ impl WhiteCardGameplayManager {
         let answer_fields = get_answer_fields_from_black_card_in_round(current_black_card);
         for (player_id, hand) in self.hands_and_played_cards.iter() {
             if let PlayerId::ArtificialPlayer(id) = player_id {
-                if self.played_cards.get(&player_id).is_some() {
+                if self.played_cards.get(player_id).is_some() {
                     continue;
                 }
                 if hand.len() >= answer_fields {
@@ -165,7 +165,7 @@ impl WhiteCardGameplayManager {
                 None => {}
             };
 
-            match self.get_card_from_player_hand(&player_id, &card) {
+            match self.get_card_from_player_hand(&player_id, card) {
                 Some(hand_card) => played_cards.push(hand_card.clone()),
                 None => {
                     return Err(Status::invalid_argument(

@@ -71,7 +71,7 @@ impl GrpcApiResourceFetcher {
             next_page_token = String::from(&response.get_ref().next_page_token);
             cards.append(&mut response.get_mut().custom_black_cards);
         }
-        return Ok(cards);
+        Ok(cards)
     }
 
     async fn get_custom_white_cards_from_custom_cardpack(
@@ -102,7 +102,7 @@ impl GrpcApiResourceFetcher {
             next_page_token = String::from(&response.get_ref().next_page_token);
             cards.append(&mut response.get_mut().custom_white_cards);
         }
-        return Ok(cards);
+        Ok(cards)
     }
 
     async fn get_default_black_cards_from_default_cardpack(
@@ -132,7 +132,7 @@ impl GrpcApiResourceFetcher {
             next_page_token = String::from(&response.get_ref().next_page_token);
             cards.append(&mut response.get_mut().default_black_cards);
         }
-        return Ok(cards);
+        Ok(cards)
     }
 
     async fn get_default_white_cards_from_default_cardpack(
@@ -162,7 +162,7 @@ impl GrpcApiResourceFetcher {
             next_page_token = String::from(&response.get_ref().next_page_token);
             cards.append(&mut response.get_mut().default_white_cards);
         }
-        return Ok(cards);
+        Ok(cards)
     }
 }
 

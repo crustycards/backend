@@ -204,7 +204,7 @@ top_level_mongo_based_resource_name!(UserProfileImageName, "users/{}/profileImag
 impl UserProfileImageName {
     pub fn to_user_name(&self) -> UserName {
         UserName {
-            object_id: self.object_id.clone(),
+            object_id: self.object_id,
         }
     }
 }

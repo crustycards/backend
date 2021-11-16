@@ -557,7 +557,7 @@ impl CardpackService for CardpackServiceImpl {
         let mut data = Vec::new();
         for req in &request.get_ref().requests {
             let (_, card_text, answer_field_count) =
-                match CardpackServiceImpl::validate_create_custom_black_card_request(&req) {
+                match CardpackServiceImpl::validate_create_custom_black_card_request(req) {
                     Ok((parent, card_text, answer_field_count)) => {
                         (parent, card_text, answer_field_count)
                     }
@@ -572,7 +572,7 @@ impl CardpackService for CardpackServiceImpl {
                 .batch_create_custom_black_cards(parent, data)
                 .await?
                 .into_iter()
-                .filter_map(|item| item)
+                .flatten()
                 .collect(),
         };
 
@@ -604,7 +604,7 @@ impl CardpackService for CardpackServiceImpl {
         let mut card_texts = Vec::new();
         for req in &request.get_ref().requests {
             let (_, card_text) =
-                match CardpackServiceImpl::validate_create_custom_white_card_request(&req) {
+                match CardpackServiceImpl::validate_create_custom_white_card_request(req) {
                     Ok((parent, card_text)) => (parent, card_text),
                     Err(grpc_err) => return Err(grpc_err),
                 };
@@ -617,7 +617,7 @@ impl CardpackService for CardpackServiceImpl {
                 .batch_create_custom_white_cards(parent, card_texts)
                 .await?
                 .into_iter()
-                .filter_map(|item| item)
+                .flatten()
                 .collect(),
         };
 
