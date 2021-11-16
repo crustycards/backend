@@ -5,14 +5,14 @@ authors = ["Tommy Volk <tvolk131@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-async-trait = "0.1.50"
-clokwerk = "0.3.4"
-lapin = { version = "1.7.0", default-features = false, features = ["rustls"] }
-mockall = "0.9.1"
-rand = "0.8.3"
-rand_chacha = "0.3.0"
+async-trait = "0.1.51"
+clokwerk = "0.3.5"
+lapin = { version = "1.8.1", default-features = false, features = ["rustls"] }
+mockall = "0.10.2"
+rand = "0.8.4"
+rand_chacha = "0.3.1"
 shared = { path = "../shared" }
-sha2 = "0.9.3"
-tokio = { version = "1.5.0", features = ["rt-multi-thread"] }
+sha2 = "0.9.8"
+tokio = { version = "1.13.1", features = ["rt-multi-thread"] }
 tonic = "0.6.1"
 uuid = { version = "0.8.2", features = ["serde", "v4"] }
