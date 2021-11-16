@@ -902,7 +902,10 @@ mod tests {
     fn assert_valid_not_running_stage(game: &Game) {
         assert_eq!(game.stage, Stage::NotRunning);
         assert!(game.player_manager.get_queued_real_players().is_empty());
-        assert!(game.player_manager.get_queued_artificial_players().is_empty());
+        assert!(game
+            .player_manager
+            .get_queued_artificial_players()
+            .is_empty());
         assert_eq!(game.player_manager.get_judge(), None);
     }
 
