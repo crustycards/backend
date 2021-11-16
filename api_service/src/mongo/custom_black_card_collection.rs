@@ -389,11 +389,15 @@ fn document_to_custom_black_card(doc: &Document) -> CustomBlackCard {
             _ => None,
         },
         update_time: match doc.get_datetime("updateTime") {
-            Ok(update_time) => Some(chrono_timestamp_to_timestamp_proto(&update_time.to_chrono())),
+            Ok(update_time) => Some(chrono_timestamp_to_timestamp_proto(
+                &update_time.to_chrono(),
+            )),
             _ => None,
         },
         delete_time: match doc.get_datetime("deleteTime") {
-            Ok(delete_time) => Some(chrono_timestamp_to_timestamp_proto(&delete_time.to_chrono())),
+            Ok(delete_time) => Some(chrono_timestamp_to_timestamp_proto(
+                &delete_time.to_chrono(),
+            )),
             _ => None,
         },
     }

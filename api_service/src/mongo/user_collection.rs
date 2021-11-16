@@ -544,7 +544,9 @@ fn document_to_user(doc: &Document) -> User {
             _ => None,
         },
         update_time: match doc.get_datetime("updateTime") {
-            Ok(update_time) => Some(chrono_timestamp_to_timestamp_proto(&update_time.to_chrono())),
+            Ok(update_time) => Some(chrono_timestamp_to_timestamp_proto(
+                &update_time.to_chrono(),
+            )),
             _ => None,
         },
     }
