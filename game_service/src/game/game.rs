@@ -899,6 +899,13 @@ mod tests {
         };
     }
 
+    fn assert_valid_not_running_stage(game: &Game) {
+        assert_eq!(game.stage, Stage::NotRunning);
+        assert!(game.player_manager.get_queued_real_players().is_empty());
+        assert!(game.player_manager.get_queued_artificial_players().is_empty());
+        assert_eq!(game.player_manager.get_judge(), None);
+    }
+
     #[test]
     fn can_start_and_stop() {
         let mut game: Game = get_basic_game_with_players(MINIMUM_PLAYERS_REQUIRED_TO_PLAY).unwrap();
@@ -925,7 +932,7 @@ mod tests {
     fn run_game_for_full_round() {
         let mut game: Game =
             get_basic_endless_game_with_players(MINIMUM_PLAYERS_REQUIRED_TO_PLAY).unwrap();
-        assert_eq!(game.stage, Stage::NotRunning);
+        assert_valid_not_running_stage(&game);
         assert_eq!(game.start("users/0").is_ok(), true);
 
         for _ in 0..100 {
@@ -944,7 +951,7 @@ mod tests {
         let mut game: Game =
             get_basic_endless_game_with_players(MINIMUM_PLAYERS_REQUIRED_TO_PLAY).unwrap();
         add_artificial_player_as_owner(&mut game);
-        assert_eq!(game.stage, Stage::NotRunning);
+        assert_valid_not_running_stage(&game);
         assert_eq!(game.start("users/0").is_ok(), true);
 
         for _ in 0..100 {
@@ -991,7 +998,7 @@ mod tests {
         let mut game: Game =
             get_basic_endless_game_with_players(MINIMUM_PLAYERS_REQUIRED_TO_PLAY).unwrap();
         add_artificial_player_as_owner(&mut game);
-        assert_eq!(game.stage, Stage::NotRunning);
+        assert_valid_not_running_stage(&game);
         assert_eq!(game.start("users/0").is_ok(), true);
         assert_eq!(game.stage, Stage::PlayPhase);
         play_for_all_real_players(&mut game);
@@ -1011,14 +1018,14 @@ mod tests {
         let mut game: Game =
             get_basic_endless_game_with_players(MINIMUM_PLAYERS_REQUIRED_TO_PLAY - 1).unwrap();
         add_artificial_player_as_owner(&mut game);
-        assert_eq!(game.stage, Stage::NotRunning);
+        assert_valid_not_running_stage(&game);
         assert_eq!(game.start("users/0").is_ok(), true);
         assert_eq!(game.stage, Stage::PlayPhase);
         play_for_all_real_players(&mut game);
         assert_eq!(game.stage, Stage::JudgePhase);
         let judge_name = String::from(&game.player_manager.get_judge().unwrap().name);
         game.leave(&judge_name).unwrap();
-        assert_eq!(game.stage, Stage::NotRunning);
+        assert_valid_not_running_stage(&game);
         game.join(get_fake_user_proto(&judge_name)).unwrap();
         let owner_name = String::from(&game.player_manager.get_owner().unwrap().name);
         assert_eq!(game.start(&owner_name).is_ok(), true);
@@ -1032,7 +1039,7 @@ mod tests {
         let mut game: Game =
             get_basic_endless_game_with_players(MINIMUM_PLAYERS_REQUIRED_TO_PLAY).unwrap();
         add_artificial_player_as_owner(&mut game);
-        assert_eq!(game.stage, Stage::NotRunning);
+        assert_valid_not_running_stage(&game);
         assert_eq!(game.start("users/0").is_ok(), true);
         assert_eq!(game.stage, Stage::PlayPhase);
         play_for_all_real_players(&mut game);
@@ -1053,7 +1060,7 @@ mod tests {
     fn add_artificial_player_during_judge_phase() {
         let mut game: Game =
             get_basic_endless_game_with_players(MINIMUM_PLAYERS_REQUIRED_TO_PLAY).unwrap();
-        assert_eq!(game.stage, Stage::NotRunning);
+        assert_valid_not_running_stage(&game);
         assert_eq!(game.start("users/0").is_ok(), true);
         assert_eq!(game.stage, Stage::PlayPhase);
         play_for_all_real_players(&mut game);
