@@ -260,107 +260,65 @@ impl CustomCardpackName {
     }
 }
 
-#[derive(Clone, Hash, PartialEq, Eq)]
-pub struct CustomBlackCardName {
-    parent_user_object_id: ObjectId,
-    parent_custom_cardpack_object_id: ObjectId,
-    object_id: ObjectId,
+macro_rules! custom_card_name {
+    ($struct_name:ident, $resource_path:expr) => {
+        #[derive(Clone, Hash, PartialEq, Eq)]
+        pub struct $struct_name {
+            parent_user_object_id: ObjectId,
+            parent_custom_cardpack_object_id: ObjectId,
+            object_id: ObjectId,
+        }
+
+        impl $struct_name {
+            pub fn new(resource_name: &ValidatedStringField) -> Result<Self, ParseNameError> {
+                match parse_three_token_name_to_object_ids(
+                    &format!("{}{}{}", "users/{}/cardpacks/{}/", $resource_path, "/{}"),
+                    resource_name.get_string(),
+                ) {
+                    Ok((parent_user_object_id, parent_custom_cardpack_object_id, object_id)) => {
+                        Ok(Self {
+                            parent_user_object_id,
+                            parent_custom_cardpack_object_id,
+                            object_id,
+                        })
+                    }
+                    Err(err) => Err(err),
+                }
+            }
+
+            pub fn new_from_parent(parent: CustomCardpackName, object_id: ObjectId) -> Self {
+                let (parent_user_object_id, parent_custom_cardpack_object_id) =
+                    parent.take_object_ids();
+                Self {
+                    parent_user_object_id,
+                    parent_custom_cardpack_object_id,
+                    object_id,
+                }
+            }
+
+            pub fn clone_str(&self) -> String {
+                format!(
+                    "users/{}/cardpacks/{}/{}/{}",
+                    self.parent_user_object_id.to_hex(),
+                    self.parent_custom_cardpack_object_id.to_hex(),
+                    $resource_path,
+                    self.object_id.to_hex()
+                )
+            }
+
+            pub fn take_object_ids(self) -> (ObjectId, ObjectId, ObjectId) {
+                (
+                    self.parent_user_object_id,
+                    self.parent_custom_cardpack_object_id,
+                    self.object_id,
+                )
+            }
+        }
+    };
 }
 
-impl CustomBlackCardName {
-    pub fn new(
-        custom_black_card_resource_name: &ValidatedStringField,
-    ) -> Result<Self, ParseNameError> {
-        match parse_three_token_name_to_object_ids(
-            "users/{}/cardpacks/{}/blackCards/{}",
-            custom_black_card_resource_name.get_string(),
-        ) {
-            Ok((parent_user_object_id, parent_custom_cardpack_object_id, object_id)) => Ok(Self {
-                parent_user_object_id,
-                parent_custom_cardpack_object_id,
-                object_id,
-            }),
-            Err(err) => Err(err),
-        }
-    }
-
-    pub fn new_from_parent(parent: CustomCardpackName, object_id: ObjectId) -> Self {
-        let (parent_user_object_id, parent_custom_cardpack_object_id) = parent.take_object_ids();
-        Self {
-            parent_user_object_id,
-            parent_custom_cardpack_object_id,
-            object_id,
-        }
-    }
-
-    pub fn clone_str(&self) -> String {
-        format!(
-            "users/{}/cardpacks/{}/blackCards/{}",
-            self.parent_user_object_id.to_hex(),
-            self.parent_custom_cardpack_object_id.to_hex(),
-            self.object_id.to_hex()
-        )
-    }
-
-    pub fn take_object_ids(self) -> (ObjectId, ObjectId, ObjectId) {
-        (
-            self.parent_user_object_id,
-            self.parent_custom_cardpack_object_id,
-            self.object_id,
-        )
-    }
-}
-
-#[derive(Clone, Hash, PartialEq, Eq)]
-pub struct CustomWhiteCardName {
-    parent_user_object_id: ObjectId,
-    parent_custom_cardpack_object_id: ObjectId,
-    object_id: ObjectId,
-}
-
-impl CustomWhiteCardName {
-    pub fn new(
-        custom_white_card_resource_name: &ValidatedStringField,
-    ) -> Result<Self, ParseNameError> {
-        match parse_three_token_name_to_object_ids(
-            "users/{}/cardpacks/{}/whiteCards/{}",
-            custom_white_card_resource_name.get_string(),
-        ) {
-            Ok((parent_user_object_id, parent_custom_cardpack_object_id, object_id)) => Ok(Self {
-                parent_user_object_id,
-                parent_custom_cardpack_object_id,
-                object_id,
-            }),
-            Err(err) => Err(err),
-        }
-    }
-
-    pub fn new_from_parent(parent: CustomCardpackName, object_id: ObjectId) -> Self {
-        let (parent_user_object_id, parent_custom_cardpack_object_id) = parent.take_object_ids();
-        Self {
-            parent_user_object_id,
-            parent_custom_cardpack_object_id,
-            object_id,
-        }
-    }
-
-    pub fn clone_str(&self) -> String {
-        format!(
-            "users/{}/cardpacks/{}/whiteCards/{}",
-            self.parent_user_object_id.to_hex(),
-            self.parent_custom_cardpack_object_id.to_hex(),
-            self.object_id.to_hex()
-        )
-    }
-
-    pub fn take_object_ids(self) -> (ObjectId, ObjectId, ObjectId) {
-        (
-            self.parent_user_object_id,
-            self.parent_custom_cardpack_object_id,
-            self.object_id,
-        )
-    }
-}
+custom_card_name!(CustomBlackCardName, "blackCards");
+custom_card_name!(CustomWhiteCardName, "whiteCards");
 
 #[derive(Clone, Hash, PartialEq, Eq)]
 pub struct DefaultCardpackName {
@@ -395,6 +353,8 @@ impl DefaultCardpackName {
 
 #[cfg(test)]
 mod tests {
+    use std::str::FromStr;
+
     use super::*;
 
     #[test]
@@ -454,5 +414,38 @@ mod tests {
                 "cardpacks/1234".to_string()
             )
         );
+    }
+
+    #[test]
+    fn test_custom_card_name() {
+        custom_card_name!(TestCardName, "testCards");
+
+        // Fails with with non-matching pattern.
+        let mut test_card_name_or = TestCardName::new(&ValidatedStringField::new("users/507f191e810c19729de860ea/cardpacks/507f191e810c19729de860eb/foo/507f191e810c19729de860ec", "test_proto.test_field_name").unwrap());
+        assert!(test_card_name_or.is_err());
+
+        test_card_name_or = TestCardName::new(&ValidatedStringField::new("users/507f191e810c19729de860ea/cardpacks/507f191e810c19729de860eb/testCards/507f191e810c19729de860ec", "test_proto.test_field_name").unwrap());
+        assert!(test_card_name_or.is_ok());
+        let mut test_card_name = test_card_name_or.unwrap();
+
+        assert_eq!(test_card_name.clone_str(), "users/507f191e810c19729de860ea/cardpacks/507f191e810c19729de860eb/testCards/507f191e810c19729de860ec");
+        let (user_object_id, cardpack_object_id, test_card_object_id) =
+            test_card_name.take_object_ids();
+        assert_eq!("507f191e810c19729de860ea", user_object_id.to_string());
+        assert_eq!("507f191e810c19729de860eb", cardpack_object_id.to_string());
+        assert_eq!("507f191e810c19729de860ec", test_card_object_id.to_string());
+
+        test_card_name = TestCardName::new_from_parent(
+            CustomCardpackName::new_from_str(
+                "users/507f191e810c19729de860ed/cardpacks/507f191e810c19729de860ee",
+            )
+            .unwrap(),
+            ObjectId::from_str("507f191e810c19729de860ef").unwrap(),
+        );
+        let (user_object_id, cardpack_object_id, test_card_object_id) =
+            test_card_name.take_object_ids();
+        assert_eq!("507f191e810c19729de860ed", user_object_id.to_string());
+        assert_eq!("507f191e810c19729de860ee", cardpack_object_id.to_string());
+        assert_eq!("507f191e810c19729de860ef", test_card_object_id.to_string());
     }
 }
