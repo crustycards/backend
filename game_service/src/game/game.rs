@@ -1015,7 +1015,6 @@ mod tests {
         assert_eq!(game.stage, Stage::JudgePhase);
     }
 
-    // TODO - This test is flakey. Look into why.
     #[test]
     fn judge_leaves_during_judge_phase_and_game_no_longer_has_enough_players_to_run() {
         let mut game: Game =
