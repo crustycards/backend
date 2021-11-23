@@ -1,4 +1,5 @@
 use tonic::Status;
+use super::grpc_error::empty_request_field_error;
 
 /// A wrapped string used to represent sanitized user input.
 /// Successful creation of a ValidatedStringField guarantees
@@ -27,37 +28,47 @@ impl ValidatedStringField {
     }
 }
 
-/// A wrapped number used to represent bounded user input.
-/// Successful creation of a BoundedNumberField guarantees
-/// that the number falls within a specified range.
-pub struct BoundedNumberField {
-    value: i32,
-}
-
-// TODO - Abstract this struct into a declarative macro where you can specify the upper and lower bounds at macro call time.
-impl BoundedNumberField {
-    pub fn new(value: i32, min: i32, max: i32, field_name: &str) -> Result<Self, Status> {
-        if min > max {
-            return Err(Status::internal(
-                "Min cannot not be greater than max when instantiating BoundedNumberField.",
-            ));
+macro_rules! bounded_number_field {
+    ($struct_name:ident, $lower_bound:expr, $upper_bound:expr, $allow_zero:expr) => {
+        /// A wrapped number used to represent bounded user input.
+        /// Successful creation of a BoundedNumberField guarantees
+        /// that the number falls within a specified range.
+        pub struct $struct_name {
+            value: i32,
         }
 
-        if value < min || value > max {
-            return Err(Status::invalid_argument(format!(
-                "Request field `{}` must be between {} and {} (inclusive).",
-                field_name, min, max
-            )));
+        impl $struct_name {
+            pub fn new(value: i32, field_name: &str) -> Result<Self, Status> {
+                if (!$allow_zero) && value == 0 {
+                    return Err(empty_request_field_error(field_name));
+                }
+
+                // TODO - Perform this check when expanding the macro, rather than when calling the generated code.
+                if $lower_bound > $upper_bound {
+                    return Err(Status::internal(
+                        "Lower bound cannot not be greater than upper bound when instantiating BoundedNumberField.",
+                    ));
+                }
+        
+                if value < $lower_bound || value > $upper_bound {
+                    return Err(Status::invalid_argument(format!(
+                        "Request field `{}` must be between {} and {} (inclusive).",
+                        field_name, $lower_bound, $upper_bound
+                    )));
+                }
+        
+                Ok(Self { value })
+            }
+        
+            pub fn get_value(&self) -> &i32 {
+                &self.value
+            }
+        
+            pub fn take_value(self) -> i32 {
+                self.value
+            }
         }
-
-        Ok(Self { value })
-    }
-
-    pub fn get_value(&self) -> &i32 {
-        &self.value
-    }
-
-    pub fn take_value(self) -> i32 {
-        self.value
     }
 }
+
+bounded_number_field!(AnswerFieldCount, 1, 3, false);

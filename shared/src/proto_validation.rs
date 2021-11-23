@@ -1,6 +1,5 @@
-use super::basic_validation::{BoundedNumberField, ValidatedStringField};
+use super::basic_validation::ValidatedStringField;
 use super::constants::*;
-use super::grpc_error::empty_request_field_error;
 use super::proto::crusty_cards_api::{
     game_config::{
         blank_white_card_config::{Behavior, BlankWhiteCardsAdded},
@@ -36,30 +35,6 @@ impl ValidatedOAuthCredentials {
 
     pub fn take_oauth_credentials(self) -> OAuthCredentials {
         self.oauth_credentials
-    }
-}
-
-pub struct AnswerFieldCount {
-    count: BoundedNumberField,
-}
-
-impl AnswerFieldCount {
-    pub fn new(count: i32, field_name: &str) -> Result<Self, Status> {
-        if count == 0 {
-            return Err(empty_request_field_error(field_name));
-        }
-
-        Ok(Self {
-            count: BoundedNumberField::new(count, 1, 3, field_name)?,
-        })
-    }
-
-    pub fn get_count(&self) -> &i32 {
-        self.count.get_value()
-    }
-
-    pub fn take_count(self) -> i32 {
-        self.count.take_value()
     }
 }
 

@@ -3,10 +3,10 @@ use bson::oid::ObjectId;
 use bson::{doc, Document};
 use mockall::automock;
 use mongodb::Collection;
-use shared::basic_validation::ValidatedStringField;
+use shared::basic_validation::{ValidatedStringField, AnswerFieldCount};
 use shared::proto::crusty_cards_api::*;
 use shared::proto::google::protobuf::Timestamp;
-use shared::proto_validation::{AnswerFieldCount, BoundedPageSize};
+use shared::proto_validation::BoundedPageSize;
 use shared::resource_name::{CustomBlackCardName, CustomCardpackName};
 use shared::time::{chrono_timestamp_to_timestamp_proto, object_id_to_timestamp_proto};
 use std::collections::HashMap;
@@ -97,7 +97,7 @@ impl MongoCustomBlackCardCollection {
           "parentUserId": parent_user_object_id,
           "parentCustomCardpackId": parent_custom_cardpack_object_id,
           "text": card_text.get_string(),
-          "answerFields": answer_fields.get_count(),
+          "answerFields": answer_fields.get_value(),
         }
     }
 }
@@ -131,7 +131,7 @@ impl CustomBlackCardCollection for MongoCustomBlackCardCollection {
         Ok(CustomBlackCard {
             name: CustomBlackCardName::new_from_parent(parent, inserted_object_id).clone_str(),
             text: card_text.take_string(),
-            answer_fields: answer_fields.take_count(),
+            answer_fields: answer_fields.take_value(),
             create_time: Some(create_time),
             update_time: None,
             delete_time: None,
@@ -191,7 +191,7 @@ impl CustomBlackCardCollection for MongoCustomBlackCardCollection {
                     name: CustomBlackCardName::new_from_parent(parent.clone(), inserted_object_id)
                         .clone_str(),
                     text: card_text.take_string(),
-                    answer_fields: answer_field_count.take_count(),
+                    answer_fields: answer_field_count.take_value(),
                     create_time: Some(create_time),
                     update_time: None,
                     delete_time: None,
@@ -330,7 +330,7 @@ impl CustomBlackCardCollection for MongoCustomBlackCardCollection {
             set_doc.insert("text", updated_card_text.take_string());
         }
         if let Some(updated_answer_fields) = updated_answer_fields_or {
-            set_doc.insert("answerFields", updated_answer_fields.take_count());
+            set_doc.insert("answerFields", updated_answer_fields.take_value());
         }
 
         let update_doc = doc! {
