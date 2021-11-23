@@ -356,6 +356,13 @@ impl PlayerManager {
             PlayerId::RealUser(user_name) => {
                 Self::remove_real_player_from_vec_by_name(&mut self.real_players, user_name);
                 Self::remove_real_player_from_vec_by_name(&mut self.queued_real_players, user_name);
+                if let Some(judge_player_index) = self.judge_player_index {
+                    if self.real_players.is_empty() {
+                        self.judge_player_index = None;
+                    } else if self.real_players.len() == judge_player_index {
+                        self.judge_player_index = Some(0);
+                    }
+                }
             }
             PlayerId::ArtificialPlayer(artificial_player_id) => {
                 Self::remove_artificial_player_from_vec_by_name(
@@ -418,5 +425,89 @@ mod tests {
                 .is_none(),
             true
         );
+    }
+
+    #[test]
+    fn judge_is_reassigned_when_current_judge_leaves() {
+        let mut player_manager = PlayerManager::new();
+
+        player_manager.add_player(Identifier::User(User {
+            name: "users/1".to_string(),
+            display_name: "User 1".to_string(),
+            create_time: None,
+            update_time: None
+        }));
+        player_manager.add_player(Identifier::User(User {
+            name: "users/2".to_string(),
+            display_name: "User 2".to_string(),
+            create_time: None,
+            update_time: None
+        }));
+        player_manager.add_player(Identifier::User(User {
+            name: "users/3".to_string(),
+            display_name: "User 3".to_string(),
+            create_time: None,
+            update_time: None
+        }));
+        player_manager.add_player(Identifier::User(User {
+            name: "users/4".to_string(),
+            display_name: "User 4".to_string(),
+            create_time: None,
+            update_time: None
+        }));
+
+        // Set judge to user 1.
+        player_manager.judge_player_index = Some(0);
+        // Sanity check.
+        assert_eq!(player_manager.get_judge().unwrap().name, "users/1");
+        // Remove user 1.
+        player_manager.remove_player(&PlayerId::RealUser("users/1".to_string()));
+        // Judge should now be user 2.
+        assert_eq!(player_manager.get_judge().unwrap().name, "users/2");
+
+
+        // Set judge to last player (reminder, judge index is 0-based).
+        player_manager.judge_player_index = Some(2);
+        // Sanity check.
+        assert_eq!(player_manager.get_judge().unwrap().name, "users/4");
+        // Remove last player.
+        player_manager.remove_player(&PlayerId::RealUser("users/4".to_string()));
+        // Judge should wrap around to first player (user 2 since we already removed user 1).
+        assert_eq!(player_manager.get_judge().unwrap().name, "users/2");
+
+        // Remove all other players
+        player_manager.remove_player(&PlayerId::RealUser("users/2".to_string()));
+        player_manager.remove_player(&PlayerId::RealUser("users/3".to_string()));
+        assert!(player_manager.get_judge().is_none());
+    }
+
+    #[test]
+    fn judge_is_reassigned_when_all_players_leave() {
+        let mut player_manager = PlayerManager::new();
+
+        player_manager.add_player(Identifier::User(User {
+            name: "users/1".to_string(),
+            display_name: "User 1".to_string(),
+            create_time: None,
+            update_time: None
+        }));
+
+        // Set judge to user 1.
+        player_manager.judge_player_index = Some(0);
+        // Sanity check.
+        assert_eq!(player_manager.get_judge().unwrap().name, "users/1");
+        // Remove user 1.
+        player_manager.remove_player(&PlayerId::RealUser("users/1".to_string()));
+        // Judge should now be None since there are no users in the game.
+        assert!(player_manager.get_judge().is_none());
+
+        // A new user who joins should not be the judge since everyone left previously.
+        player_manager.add_player(Identifier::User(User {
+            name: "users/2".to_string(),
+            display_name: "User 2".to_string(),
+            create_time: None,
+            update_time: None
+        }));
+        assert!(player_manager.get_judge().is_none());
     }
 }

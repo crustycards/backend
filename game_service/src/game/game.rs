@@ -906,7 +906,6 @@ mod tests {
             .player_manager
             .get_queued_artificial_players()
             .is_empty());
-        assert_eq!(game.player_manager.get_judge(), None);
     }
 
     #[test]
