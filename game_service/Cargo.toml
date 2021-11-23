@@ -13,6 +13,6 @@ rand = "0.8.4"
 rand_chacha = "0.3.1"
 shared = { path = "../shared" }
 sha2 = "0.9.8"
-tokio = { version = "1.13.1", features = ["rt-multi-thread"] }
+tokio = { version = "1.14.0", features = ["rt-multi-thread"] }
 tonic = "0.6.1"
 uuid = { version = "0.8.2", features = ["serde", "v4"] }
