@@ -435,25 +435,25 @@ mod tests {
             name: "users/1".to_string(),
             display_name: "User 1".to_string(),
             create_time: None,
-            update_time: None
+            update_time: None,
         }));
         player_manager.add_player(Identifier::User(User {
             name: "users/2".to_string(),
             display_name: "User 2".to_string(),
             create_time: None,
-            update_time: None
+            update_time: None,
         }));
         player_manager.add_player(Identifier::User(User {
             name: "users/3".to_string(),
             display_name: "User 3".to_string(),
             create_time: None,
-            update_time: None
+            update_time: None,
         }));
         player_manager.add_player(Identifier::User(User {
             name: "users/4".to_string(),
             display_name: "User 4".to_string(),
             create_time: None,
-            update_time: None
+            update_time: None,
         }));
 
         // Set judge to user 1.
@@ -464,7 +464,6 @@ mod tests {
         player_manager.remove_player(&PlayerId::RealUser("users/1".to_string()));
         // Judge should now be user 2.
         assert_eq!(player_manager.get_judge().unwrap().name, "users/2");
-
 
         // Set judge to last player (reminder, judge index is 0-based).
         player_manager.judge_player_index = Some(2);
@@ -489,7 +488,7 @@ mod tests {
             name: "users/1".to_string(),
             display_name: "User 1".to_string(),
             create_time: None,
-            update_time: None
+            update_time: None,
         }));
 
         // Set judge to user 1.
@@ -506,7 +505,7 @@ mod tests {
             name: "users/2".to_string(),
             display_name: "User 2".to_string(),
             create_time: None,
-            update_time: None
+            update_time: None,
         }));
         assert!(player_manager.get_judge().is_none());
     }

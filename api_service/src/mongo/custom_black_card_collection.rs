@@ -3,7 +3,7 @@ use bson::oid::ObjectId;
 use bson::{doc, Document};
 use mockall::automock;
 use mongodb::Collection;
-use shared::basic_validation::{ValidatedStringField, AnswerFieldCount};
+use shared::basic_validation::{AnswerFieldCount, ValidatedStringField};
 use shared::proto::crusty_cards_api::*;
 use shared::proto::google::protobuf::Timestamp;
 use shared::proto_validation::BoundedPageSize;

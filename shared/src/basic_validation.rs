@@ -1,5 +1,5 @@
-use tonic::Status;
 use super::grpc_error::empty_request_field_error;
+use tonic::Status;
 
 /// A wrapped string used to represent sanitized user input.
 /// Successful creation of a ValidatedStringField guarantees
@@ -49,21 +49,21 @@ macro_rules! bounded_number_field {
                         "Lower bound cannot not be greater than upper bound when instantiating BoundedNumberField.",
                     ));
                 }
-        
+
                 if value < $lower_bound || value > $upper_bound {
                     return Err(Status::invalid_argument(format!(
                         "Request field `{}` must be between {} and {} (inclusive).",
                         field_name, $lower_bound, $upper_bound
                     )));
                 }
-        
+
                 Ok(Self { value })
             }
-        
+
             pub fn get_value(&self) -> &i32 {
                 &self.value
             }
-        
+
             pub fn take_value(self) -> i32 {
                 self.value
             }

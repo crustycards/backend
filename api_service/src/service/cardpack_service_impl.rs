@@ -5,7 +5,7 @@ use super::super::mongo::user_collection::UserCollection;
 use super::super::proto_helper::page_token::*;
 use super::default_cardpacks::DefaultCardpackHandler;
 use super::helper::*;
-use shared::basic_validation::{ValidatedStringField, AnswerFieldCount};
+use shared::basic_validation::{AnswerFieldCount, ValidatedStringField};
 use shared::proto::crusty_cards_api::cardpack_service_server::CardpackService;
 use shared::proto::crusty_cards_api::*;
 use shared::proto::google::protobuf::Empty;
