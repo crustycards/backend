@@ -1,5 +1,9 @@
 use tonic::Status;
 
+/// A wrapped string used to represent sanitized user input.
+/// Successful creation of a ValidatedStringField guarantees
+/// that the string is non-empty and contains no whitespace
+/// at the beginning or end.
 #[derive(Clone)]
 pub struct ValidatedStringField {
     string: String,
@@ -23,10 +27,14 @@ impl ValidatedStringField {
     }
 }
 
+/// A wrapped number used to represent bounded user input.
+/// Successful creation of a BoundedNumberField guarantees
+/// that the number falls within a specified range.
 pub struct BoundedNumberField {
     value: i32,
 }
 
+// TODO - Abstract this struct into a declarative macro where you can specify the upper and lower bounds at macro call time.
 impl BoundedNumberField {
     pub fn new(value: i32, min: i32, max: i32, field_name: &str) -> Result<Self, Status> {
         if min > max {
