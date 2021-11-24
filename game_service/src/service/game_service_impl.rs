@@ -1,6 +1,6 @@
-use super::super::game::game::Game;
 use super::super::game::game_indexer::GameIndexer;
 use super::super::game::player_id::PlayerId;
+use super::super::game::Game;
 use super::api_resource_fetcher::ApiResourceFetcher;
 use crate::amqp::MessageQueue;
 use clokwerk::{Interval, ScheduleHandle, Scheduler};

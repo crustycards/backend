@@ -1,5 +1,5 @@
-use super::game::Game;
 use super::player_id::PlayerId;
+use super::Game;
 use std::time::Duration;
 
 pub struct GameIndexer {
