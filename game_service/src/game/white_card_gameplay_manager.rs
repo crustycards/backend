@@ -89,7 +89,7 @@ impl WhiteCardGameplayManager {
         // TODO - Handle what to do if artificial player's hand contains blank white cards.
         let answer_fields = get_answer_fields_from_black_card_in_round(current_black_card);
         for (player_id, hand) in self.hands_and_played_cards.iter() {
-            if let PlayerId::ArtificialPlayer(id) = player_id {
+            if let PlayerId::ArtificialPlayer(_id) = player_id {
                 if self.played_cards.get(player_id).is_some() {
                     continue;
                 }
