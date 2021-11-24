@@ -65,7 +65,7 @@ impl GameServiceImpl {
     fn try_send_amqp_game_update_message_to_users_in_game(&self, game: &Game) {
         match &self.message_queue_or {
             Some(message_queue) => {
-                message_queue.game_updated_for_users(game.get_user_names_for_all_real_players());
+                message_queue.game_updated_for_users(game.get_user_names_for_all_real_players()).unwrap();
             }
             None => {}
         };

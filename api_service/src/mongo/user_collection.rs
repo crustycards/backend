@@ -37,6 +37,7 @@ fn user_settings_projection_doc() -> Document {
 
 type UserStream = Box<dyn Stream<Item = Result<User, mongodb::error::Error>> + Send + Unpin>;
 
+// TODO - More thoroughly test this collection.
 #[automock]
 #[tonic::async_trait]
 pub trait UserCollection: Send + Sync {
@@ -729,65 +730,3 @@ fn document_to_blank_white_card_config(doc: &Document) -> BlankWhiteCardConfig {
         blank_white_cards_added,
     }
 }
-
-// TODO - Uncomment this and fix the test. Also, test the rest of this collection.
-// #[cfg(test)]
-// mod tests {
-//     use super::super::super::search_client::MockSearchClient;
-//     use super::*;
-
-//     #[tokio::test]
-//     async fn get_users_from_names() {
-//         let user_service = get_local_test_user_service(Some(Box::from(
-//             |mock_search_client: &mut MockSearchClient| {
-//                 mock_search_client
-//                     .expect_index_user()
-//                     .times(1)
-//                     .returning(|_, _| Ok(()));
-//             },
-//         )))
-//         .await;
-
-//         assert_eq!(
-//             vec! {None},
-//             user_service
-//                 .get_users_from_names(
-//                     vec! {UserName::new("users/507f1f77bcf86cd799439011").unwrap()}
-//                 )
-//                 .await
-//                 .unwrap()
-//         );
-
-//         let oauth_credentials = OAuthCredentials {
-//             oauth_provider: String::from("google"),
-//             oauth_id: String::from("1234"),
-//         };
-//         let mut user = User {
-//             name: String::from(""),
-//             display_name: String::from("Tommy"),
-//             create_time: None,
-//             update_time: None,
-//         };
-//         let get_or_create_user_request = GetOrCreateUserRequest {
-//             oauth_credentials: Some(oauth_credentials),
-//             user: Some(user),
-//         };
-//         user = user_service
-//             .get_or_create_user(Request::new(get_or_create_user_request))
-//             .await
-//             .unwrap()
-//             .into_inner();
-
-//         assert_eq!(
-//             vec! {None, Some(user.clone()), None},
-//             user_service
-//                 .get_users_from_names(vec! {
-//                     UserName::new("users/507f1f77bcf86cd799439011").unwrap(),
-//                     UserName::new(&user.name).unwrap(),
-//                     UserName::new("users/507f1f77bcf86cd799439012").unwrap()
-//                 })
-//                 .await
-//                 .unwrap()
-//         );
-//     }
-// }

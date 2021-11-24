@@ -25,6 +25,7 @@ pub mod test {
     use super::super::super::search_client::MockSearchClient;
     use super::super::user_service_impl::UserServiceImpl;
     use std::sync::Arc;
+
     pub async fn get_local_test_user_service(
         mutate_mock_search_client_or: Option<Box<dyn Fn(&mut MockSearchClient) -> ()>>,
     ) -> UserServiceImpl {
