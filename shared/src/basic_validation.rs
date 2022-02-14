@@ -50,7 +50,7 @@ macro_rules! bounded_number_field {
                     ));
                 }
 
-                if value < $lower_bound || value > $upper_bound {
+                if !($lower_bound..=$upper_bound).contains(&value) {
                     return Err(Status::invalid_argument(format!(
                         "Request field `{}` must be between {} and {} (inclusive).",
                         field_name, $lower_bound, $upper_bound

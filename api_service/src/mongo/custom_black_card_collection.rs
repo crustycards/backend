@@ -294,7 +294,7 @@ impl CustomBlackCardCollection for MongoCustomBlackCardCollection {
             custom_black_card_projection_doc(),
             page_size,
             last_object_id_or,
-            &|doc| document_to_custom_black_card(doc),
+            &document_to_custom_black_card,
         )
         .await
     }

@@ -283,7 +283,7 @@ impl CustomWhiteCardCollection for MongoCustomWhiteCardCollection {
             custom_white_card_projection_doc(),
             page_size,
             last_object_id_or,
-            &|doc| document_to_custom_white_card(doc),
+            &document_to_custom_white_card,
         )
         .await
     }

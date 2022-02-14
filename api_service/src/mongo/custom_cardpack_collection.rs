@@ -290,7 +290,7 @@ impl CustomCardpackCollection for MongoCustomCardpackCollection {
             custom_cardpack_projection_doc(),
             page_size,
             last_object_id_or,
-            &|doc| document_to_custom_cardpack(doc),
+            &document_to_custom_cardpack,
         )
         .await
     }
@@ -365,7 +365,7 @@ impl CustomCardpackCollection for MongoCustomCardpackCollection {
             .collect();
         let custom_cardpacks_map: HashMap<CustomCardpackName, CustomCardpack> = docs
             .iter()
-            .map(|doc| document_to_custom_cardpack(doc))
+            .map(document_to_custom_cardpack)
             .filter_map(|custom_cardpack| {
                 match CustomCardpackName::new_from_str(&custom_cardpack.name) {
                     Ok(custom_cardpack_name) => Some((custom_cardpack_name, custom_cardpack)),

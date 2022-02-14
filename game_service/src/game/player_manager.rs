@@ -26,7 +26,7 @@ const ARTIFICIAL_PLAYER_DEFAULT_NAMES: [&str; 30] = [
     // Spies
     "James Bond",
     "Ethan Hunt",
-    "Jason Borne",
+    "Jason Bourne",
     // Star Wars Characters
     "Salacious B. Crumb",
     "Logray",

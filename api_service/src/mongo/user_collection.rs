@@ -380,7 +380,7 @@ impl UserCollection for MongoUserCollection {
             .collect();
         let users_map: HashMap<UserName, User> = docs
             .iter()
-            .map(|doc| document_to_user(doc))
+            .map(document_to_user)
             .into_iter()
             .filter_map(|user| match UserName::new_from_str(&user.name) {
                 Ok(user_name) => Some((user_name, user)),

@@ -53,8 +53,8 @@ impl WhiteCardGameplayManager {
     }
 
     pub fn discard_player_hands(&mut self) {
-        for (_, mut hand) in self.hands_and_played_cards.iter_mut() {
-            self.white_card_deck.discard_many(&mut hand);
+        for (_, hand) in self.hands_and_played_cards.iter_mut() {
+            self.white_card_deck.discard_many(hand);
         }
     }
 
