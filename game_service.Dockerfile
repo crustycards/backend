@@ -1,4 +1,4 @@
-FROM rust:1.56.1 as build
+FROM rust:1.60.0 as build
 WORKDIR /app
 COPY / /app
 RUN \
@@ -10,7 +10,7 @@ RUN \
     mkdir -p /build-out &&\
     cp target/release/game_service /build-out/
 
-FROM debian:10-slim
+FROM debian:11-slim
 COPY --from=build /build-out/game_service /
 EXPOSE 50052
 CMD /game_service
