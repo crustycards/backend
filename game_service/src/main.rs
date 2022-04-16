@@ -21,7 +21,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cardpack_service =
         CardpackServiceClient::connect(String::from(env_vars.get_api_uri())).await?;
     let user_service = UserServiceClient::connect(String::from(env_vars.get_api_uri())).await?;
-    let message_queue = MessageQueue::new(env_vars.get_amqp_uri());
+    let message_queue = MessageQueue::new(env_vars.get_amqp_uri()).await;
 
     println!("Starting server on port {}", port);
     Server::builder()

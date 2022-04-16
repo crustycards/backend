@@ -62,11 +62,12 @@ impl GameServiceImpl {
         Uuid::new_v4().to_simple().to_string()
     }
 
-    fn try_send_amqp_game_update_message_to_users_in_game(&self, game: &Game) {
+    async fn try_send_amqp_game_update_message_to_users(&self, user_names: Vec<impl ToString>) {
         match &self.message_queue_or {
             Some(message_queue) => {
                 message_queue
-                    .game_updated_for_users(game.get_user_names_for_all_real_players())
+                    .game_updated_for_users(user_names)
+                    .await
                     .unwrap();
             }
             None => {}
@@ -224,19 +225,26 @@ impl GameService for GameServiceImpl {
             return Err(empty_request_field_error("user_name"));
         }
 
-        let mut games = self.games.lock().unwrap();
-        let game = match games.get_game_by_player_id(&PlayerId::RealUser(String::from(
-            &request.get_ref().user_name,
-        ))) {
-            Some(game) => game,
-            None => return Err(Status::invalid_argument("User is not in a game.")),
+        let (users_to_update, game_view_or) = {
+            let mut games = self.games.lock().unwrap();
+            let game = match games.get_game_by_player_id(&PlayerId::RealUser(String::from(
+                &request.get_ref().user_name,
+            ))) {
+                Some(game) => game,
+                None => return Err(Status::invalid_argument("User is not in a game.")),
+            };
+            game.start(&request.get_ref().user_name)?;
+            (
+                game.get_user_names_for_all_real_players(),
+                match game.get_user_view(&request.get_ref().user_name) {
+                    Ok(game_view) => Ok(Response::new(game_view)),
+                    Err(err) => Err(err),
+                },
+            )
         };
-        game.start(&request.get_ref().user_name)?;
-        self.try_send_amqp_game_update_message_to_users_in_game(game);
-        match game.get_user_view(&request.get_ref().user_name) {
-            Ok(game_view) => Ok(Response::new(game_view)),
-            Err(err) => Err(err),
-        }
+        self.try_send_amqp_game_update_message_to_users(users_to_update)
+            .await;
+        game_view_or
     }
 
     async fn stop_game(
@@ -247,19 +255,26 @@ impl GameService for GameServiceImpl {
             return Err(empty_request_field_error("user_name"));
         }
 
-        let mut games = self.games.lock().unwrap();
-        let game = match games.get_game_by_player_id(&PlayerId::RealUser(String::from(
-            &request.get_ref().user_name,
-        ))) {
-            Some(game) => game,
-            None => return Err(Status::invalid_argument("User is not in a game.")),
+        let (users_to_update, game_view_or) = {
+            let mut games = self.games.lock().unwrap();
+            let game = match games.get_game_by_player_id(&PlayerId::RealUser(String::from(
+                &request.get_ref().user_name,
+            ))) {
+                Some(game) => game,
+                None => return Err(Status::invalid_argument("User is not in a game.")),
+            };
+            game.stop(&request.get_ref().user_name)?;
+            (
+                game.get_user_names_for_all_real_players(),
+                match game.get_user_view(&request.get_ref().user_name) {
+                    Ok(game_view) => Ok(Response::new(game_view)),
+                    Err(err) => Err(err),
+                },
+            )
         };
-        game.stop(&request.get_ref().user_name)?;
-        self.try_send_amqp_game_update_message_to_users_in_game(game);
-        match game.get_user_view(&request.get_ref().user_name) {
-            Ok(game_view) => Ok(Response::new(game_view)),
-            Err(err) => Err(err),
-        }
+        self.try_send_amqp_game_update_message_to_users(users_to_update)
+            .await;
+        game_view_or
     }
 
     async fn join_game(
@@ -282,30 +297,38 @@ impl GameService for GameServiceImpl {
             Ok(user) => user,
             Err(err) => return Err(err),
         };
-        let mut games = self.games.lock().unwrap();
-        if games
-            .get_game_by_player_id(&PlayerId::RealUser(String::from(
-                &request.get_ref().user_name,
-            )))
-            .is_some()
-        {
-            return Err(Status::invalid_argument("User is already in a game."));
-        }
-        let game = match games.get_game_by_game_id(&request.get_ref().game_id) {
-            Some(game) => game,
-            None => {
-                return Err(Status::invalid_argument(format!(
-                    "Game does not exist with id: `{}`.",
-                    request.get_ref().game_id
+
+        let (users_to_update, game_view_or) = {
+            let mut games = self.games.lock().unwrap();
+            if games
+                .get_game_by_player_id(&PlayerId::RealUser(String::from(
+                    &request.get_ref().user_name,
                 )))
+                .is_some()
+            {
+                return Err(Status::invalid_argument("User is already in a game."));
             }
+            let game = match games.get_game_by_game_id(&request.get_ref().game_id) {
+                Some(game) => game,
+                None => {
+                    return Err(Status::invalid_argument(format!(
+                        "Game does not exist with id: `{}`.",
+                        request.get_ref().game_id
+                    )))
+                }
+            };
+            game.join(user)?;
+            (
+                game.get_user_names_for_all_real_players(),
+                match game.get_user_view(&request.get_ref().user_name) {
+                    Ok(game_view) => Ok(Response::new(game_view)),
+                    Err(err) => Err(err),
+                },
+            )
         };
-        game.join(user)?;
-        self.try_send_amqp_game_update_message_to_users_in_game(game);
-        match game.get_user_view(&request.get_ref().user_name) {
-            Ok(game_view) => Ok(Response::new(game_view)),
-            Err(err) => Err(err),
-        }
+        self.try_send_amqp_game_update_message_to_users(users_to_update)
+            .await;
+        game_view_or
     }
 
     async fn leave_game(
@@ -316,21 +339,29 @@ impl GameService for GameServiceImpl {
             return Err(empty_request_field_error("user_name"));
         }
 
-        let mut games = self.games.lock().unwrap();
-        let (game_id, game_is_empty) = {
-            let game = match games.get_game_by_player_id(&PlayerId::RealUser(String::from(
-                &request.get_ref().user_name,
-            ))) {
-                Some(game) => game,
-                None => return Err(Status::invalid_argument("User is not in a game.")),
+        let users_to_update = {
+            let mut games = self.games.lock().unwrap();
+            let (game_id, game_is_empty, users_to_update) = {
+                let game = match games.get_game_by_player_id(&PlayerId::RealUser(String::from(
+                    &request.get_ref().user_name,
+                ))) {
+                    Some(game) => game,
+                    None => return Err(Status::invalid_argument("User is not in a game.")),
+                };
+                game.leave(&request.get_ref().user_name)?;
+                (
+                    String::from(game.get_game_id()),
+                    game.is_empty(),
+                    game.get_user_names_for_all_real_players(),
+                )
             };
-            game.leave(&request.get_ref().user_name)?;
-            self.try_send_amqp_game_update_message_to_users_in_game(game);
-            (String::from(game.get_game_id()), game.is_empty())
+            if game_is_empty {
+                games.remove_game(&game_id);
+            }
+            users_to_update
         };
-        if game_is_empty {
-            games.remove_game(&game_id);
-        }
+        self.try_send_amqp_game_update_message_to_users(users_to_update)
+            .await;
         Ok(Response::new(Empty {}))
     }
 
@@ -345,22 +376,29 @@ impl GameService for GameServiceImpl {
             return Err(empty_request_field_error("troll_user_name"));
         }
 
-        let mut games = self.games.lock().unwrap();
-        let game = match games.get_game_by_player_id(&PlayerId::RealUser(String::from(
-            &request.get_ref().user_name,
-        ))) {
-            Some(game) => game,
-            None => return Err(Status::invalid_argument("User is not in a game.")),
+        let (users_to_update, game_view_or) = {
+            let mut games = self.games.lock().unwrap();
+            let game = match games.get_game_by_player_id(&PlayerId::RealUser(String::from(
+                &request.get_ref().user_name,
+            ))) {
+                Some(game) => game,
+                None => return Err(Status::invalid_argument("User is not in a game.")),
+            };
+            game.kick_user(
+                &request.get_ref().user_name,
+                &request.get_ref().troll_user_name,
+            )?;
+            (
+                game.get_user_names_for_all_real_players(),
+                match game.get_user_view(&request.get_ref().user_name) {
+                    Ok(game_view) => Ok(Response::new(game_view)),
+                    Err(err) => Err(err),
+                },
+            )
         };
-        game.kick_user(
-            &request.get_ref().user_name,
-            &request.get_ref().troll_user_name,
-        )?;
-        self.try_send_amqp_game_update_message_to_users_in_game(game);
-        match game.get_user_view(&request.get_ref().user_name) {
-            Ok(game_view) => Ok(Response::new(game_view)),
-            Err(err) => Err(err),
-        }
+        self.try_send_amqp_game_update_message_to_users(users_to_update)
+            .await;
+        game_view_or
     }
 
     async fn ban_user(
@@ -382,19 +420,27 @@ impl GameService for GameServiceImpl {
             Ok(user) => user,
             Err(err) => return Err(err),
         };
-        let mut games = self.games.lock().unwrap();
-        let game = match games.get_game_by_player_id(&PlayerId::RealUser(String::from(
-            &request.get_ref().user_name,
-        ))) {
-            Some(game) => game,
-            None => return Err(Status::invalid_argument("User is not in a game.")),
+
+        let (users_to_update, game_view_or) = {
+            let mut games = self.games.lock().unwrap();
+            let game = match games.get_game_by_player_id(&PlayerId::RealUser(String::from(
+                &request.get_ref().user_name,
+            ))) {
+                Some(game) => game,
+                None => return Err(Status::invalid_argument("User is not in a game.")),
+            };
+            game.ban_user(&request.get_ref().user_name, troll_user)?;
+            (
+                game.get_user_names_for_all_real_players(),
+                match game.get_user_view(&request.get_ref().user_name) {
+                    Ok(game_view) => Ok(Response::new(game_view)),
+                    Err(err) => Err(err),
+                },
+            )
         };
-        game.ban_user(&request.get_ref().user_name, troll_user)?;
-        self.try_send_amqp_game_update_message_to_users_in_game(game);
-        match game.get_user_view(&request.get_ref().user_name) {
-            Ok(game_view) => Ok(Response::new(game_view)),
-            Err(err) => Err(err),
-        }
+        self.try_send_amqp_game_update_message_to_users(users_to_update)
+            .await;
+        game_view_or
     }
 
     async fn unban_user(
@@ -408,22 +454,29 @@ impl GameService for GameServiceImpl {
             return Err(empty_request_field_error("troll_user_name"));
         }
 
-        let mut games = self.games.lock().unwrap();
-        let game = match games.get_game_by_player_id(&PlayerId::RealUser(String::from(
-            &request.get_ref().user_name,
-        ))) {
-            Some(game) => game,
-            None => return Err(Status::invalid_argument("User is not in a game.")),
+        let (users_to_update, game_view_or) = {
+            let mut games = self.games.lock().unwrap();
+            let game = match games.get_game_by_player_id(&PlayerId::RealUser(String::from(
+                &request.get_ref().user_name,
+            ))) {
+                Some(game) => game,
+                None => return Err(Status::invalid_argument("User is not in a game.")),
+            };
+            game.unban_user(
+                &request.get_ref().user_name,
+                &request.get_ref().troll_user_name,
+            )?;
+            (
+                game.get_user_names_for_all_real_players(),
+                match game.get_user_view(&request.get_ref().user_name) {
+                    Ok(game_view) => Ok(Response::new(game_view)),
+                    Err(err) => Err(err),
+                },
+            )
         };
-        game.unban_user(
-            &request.get_ref().user_name,
-            &request.get_ref().troll_user_name,
-        )?;
-        self.try_send_amqp_game_update_message_to_users_in_game(game);
-        match game.get_user_view(&request.get_ref().user_name) {
-            Ok(game_view) => Ok(Response::new(game_view)),
-            Err(err) => Err(err),
-        }
+        self.try_send_amqp_game_update_message_to_users(users_to_update)
+            .await;
+        game_view_or
     }
 
     async fn play_cards(
@@ -434,19 +487,26 @@ impl GameService for GameServiceImpl {
             return Err(empty_request_field_error("user_name"));
         }
 
-        let mut games = self.games.lock().unwrap();
-        let game = match games.get_game_by_player_id(&PlayerId::RealUser(String::from(
-            &request.get_ref().user_name,
-        ))) {
-            Some(game) => game,
-            None => return Err(Status::invalid_argument("User is not in a game.")),
+        let (users_to_update, game_view_or) = {
+            let mut games = self.games.lock().unwrap();
+            let game = match games.get_game_by_player_id(&PlayerId::RealUser(String::from(
+                &request.get_ref().user_name,
+            ))) {
+                Some(game) => game,
+                None => return Err(Status::invalid_argument("User is not in a game.")),
+            };
+            game.play_cards(&request.get_ref().user_name, &request.get_ref().cards)?;
+            (
+                game.get_user_names_for_all_real_players(),
+                match game.get_user_view(&request.get_ref().user_name) {
+                    Ok(game_view) => Ok(Response::new(game_view)),
+                    Err(err) => Err(err),
+                },
+            )
         };
-        game.play_cards(&request.get_ref().user_name, &request.get_ref().cards)?;
-        self.try_send_amqp_game_update_message_to_users_in_game(game);
-        match game.get_user_view(&request.get_ref().user_name) {
-            Ok(game_view) => Ok(Response::new(game_view)),
-            Err(err) => Err(err),
-        }
+        self.try_send_amqp_game_update_message_to_users(users_to_update)
+            .await;
+        game_view_or
     }
 
     async fn unplay_cards(
@@ -457,19 +517,26 @@ impl GameService for GameServiceImpl {
             return Err(empty_request_field_error("user_name"));
         }
 
-        let mut games = self.games.lock().unwrap();
-        let game = match games.get_game_by_player_id(&PlayerId::RealUser(String::from(
-            &request.get_ref().user_name,
-        ))) {
-            Some(game) => game,
-            None => return Err(Status::invalid_argument("User is not in a game.")),
+        let (users_to_update, game_view_or) = {
+            let mut games = self.games.lock().unwrap();
+            let game = match games.get_game_by_player_id(&PlayerId::RealUser(String::from(
+                &request.get_ref().user_name,
+            ))) {
+                Some(game) => game,
+                None => return Err(Status::invalid_argument("User is not in a game.")),
+            };
+            game.unplay_cards(&request.get_ref().user_name)?;
+            (
+                game.get_user_names_for_all_real_players(),
+                match game.get_user_view(&request.get_ref().user_name) {
+                    Ok(game_view) => Ok(Response::new(game_view)),
+                    Err(err) => Err(err),
+                },
+            )
         };
-        game.unplay_cards(&request.get_ref().user_name)?;
-        self.try_send_amqp_game_update_message_to_users_in_game(game);
-        match game.get_user_view(&request.get_ref().user_name) {
-            Ok(game_view) => Ok(Response::new(game_view)),
-            Err(err) => Err(err),
-        }
+        self.try_send_amqp_game_update_message_to_users(users_to_update)
+            .await;
+        game_view_or
     }
 
     async fn vote_card(
@@ -486,19 +553,26 @@ impl GameService for GameServiceImpl {
             return Err(negative_request_field_error("choice"));
         }
 
-        let mut games = self.games.lock().unwrap();
-        let game = match games.get_game_by_player_id(&PlayerId::RealUser(String::from(
-            &request.get_ref().user_name,
-        ))) {
-            Some(game) => game,
-            None => return Err(Status::invalid_argument("User is not in a game.")),
+        let (users_to_update, game_view_or) = {
+            let mut games = self.games.lock().unwrap();
+            let game = match games.get_game_by_player_id(&PlayerId::RealUser(String::from(
+                &request.get_ref().user_name,
+            ))) {
+                Some(game) => game,
+                None => return Err(Status::invalid_argument("User is not in a game.")),
+            };
+            game.vote_card(&request.get_ref().user_name, request.get_ref().choice)?;
+            (
+                game.get_user_names_for_all_real_players(),
+                match game.get_user_view(&request.get_ref().user_name) {
+                    Ok(game_view) => Ok(Response::new(game_view)),
+                    Err(err) => Err(err),
+                },
+            )
         };
-        game.vote_card(&request.get_ref().user_name, request.get_ref().choice)?;
-        self.try_send_amqp_game_update_message_to_users_in_game(game);
-        match game.get_user_view(&request.get_ref().user_name) {
-            Ok(game_view) => Ok(Response::new(game_view)),
-            Err(err) => Err(err),
-        }
+        self.try_send_amqp_game_update_message_to_users(users_to_update)
+            .await;
+        game_view_or
     }
 
     async fn vote_start_next_round(
@@ -509,19 +583,26 @@ impl GameService for GameServiceImpl {
             return Err(empty_request_field_error("user_name"));
         }
 
-        let mut games = self.games.lock().unwrap();
-        let game = match games.get_game_by_player_id(&PlayerId::RealUser(String::from(
-            &request.get_ref().user_name,
-        ))) {
-            Some(game) => game,
-            None => return Err(Status::invalid_argument("User is not in a game.")),
+        let (users_to_update, game_view_or) = {
+            let mut games = self.games.lock().unwrap();
+            let game = match games.get_game_by_player_id(&PlayerId::RealUser(String::from(
+                &request.get_ref().user_name,
+            ))) {
+                Some(game) => game,
+                None => return Err(Status::invalid_argument("User is not in a game.")),
+            };
+            game.vote_start_next_round(&request.get_ref().user_name)?;
+            (
+                game.get_user_names_for_all_real_players(),
+                match game.get_user_view(&request.get_ref().user_name) {
+                    Ok(game_view) => Ok(Response::new(game_view)),
+                    Err(err) => Err(err),
+                },
+            )
         };
-        game.vote_start_next_round(&request.get_ref().user_name)?;
-        self.try_send_amqp_game_update_message_to_users_in_game(game);
-        match game.get_user_view(&request.get_ref().user_name) {
-            Ok(game_view) => Ok(Response::new(game_view)),
-            Err(err) => Err(err),
-        }
+        self.try_send_amqp_game_update_message_to_users(users_to_update)
+            .await;
+        game_view_or
     }
 
     async fn add_artificial_player(
@@ -532,22 +613,29 @@ impl GameService for GameServiceImpl {
             return Err(empty_request_field_error("user_name"));
         }
 
-        let mut games = self.games.lock().unwrap();
-        let game = match games.get_game_by_player_id(&PlayerId::RealUser(String::from(
-            &request.get_ref().user_name,
-        ))) {
-            Some(game) => game,
-            None => return Err(Status::invalid_argument("User is not in a game.")),
+        let (users_to_update, game_view_or) = {
+            let mut games = self.games.lock().unwrap();
+            let game = match games.get_game_by_player_id(&PlayerId::RealUser(String::from(
+                &request.get_ref().user_name,
+            ))) {
+                Some(game) => game,
+                None => return Err(Status::invalid_argument("User is not in a game.")),
+            };
+            game.add_artificial_player(
+                &request.get_ref().user_name,
+                String::from(&request.get_ref().display_name),
+            )?;
+            (
+                game.get_user_names_for_all_real_players(),
+                match game.get_user_view(&request.get_ref().user_name) {
+                    Ok(game_view) => Ok(Response::new(game_view)),
+                    Err(err) => Err(err),
+                },
+            )
         };
-        game.add_artificial_player(
-            &request.get_ref().user_name,
-            String::from(&request.get_ref().display_name),
-        )?;
-        self.try_send_amqp_game_update_message_to_users_in_game(game);
-        match game.get_user_view(&request.get_ref().user_name) {
-            Ok(game_view) => Ok(Response::new(game_view)),
-            Err(err) => Err(err),
-        }
+        self.try_send_amqp_game_update_message_to_users(users_to_update)
+            .await;
+        game_view_or
     }
 
     async fn remove_artificial_player(
@@ -558,22 +646,29 @@ impl GameService for GameServiceImpl {
             return Err(empty_request_field_error("user_name"));
         }
 
-        let mut games = self.games.lock().unwrap();
-        let game = match games.get_game_by_player_id(&PlayerId::RealUser(String::from(
-            &request.get_ref().user_name,
-        ))) {
-            Some(game) => game,
-            None => return Err(Status::invalid_argument("User is not in a game.")),
+        let (users_to_update, game_view_or) = {
+            let mut games = self.games.lock().unwrap();
+            let game = match games.get_game_by_player_id(&PlayerId::RealUser(String::from(
+                &request.get_ref().user_name,
+            ))) {
+                Some(game) => game,
+                None => return Err(Status::invalid_argument("User is not in a game.")),
+            };
+            game.remove_artificial_player(
+                &request.get_ref().user_name,
+                &request.get_ref().artificial_player_id,
+            )?;
+            (
+                game.get_user_names_for_all_real_players(),
+                match game.get_user_view(&request.get_ref().user_name) {
+                    Ok(game_view) => Ok(Response::new(game_view)),
+                    Err(err) => Err(err),
+                },
+            )
         };
-        game.remove_artificial_player(
-            &request.get_ref().user_name,
-            &request.get_ref().artificial_player_id,
-        )?;
-        self.try_send_amqp_game_update_message_to_users_in_game(game);
-        match game.get_user_view(&request.get_ref().user_name) {
-            Ok(game_view) => Ok(Response::new(game_view)),
-            Err(err) => Err(err),
-        }
+        self.try_send_amqp_game_update_message_to_users(users_to_update)
+            .await;
+        game_view_or
     }
 
     async fn create_chat_message(
@@ -591,22 +686,29 @@ impl GameService for GameServiceImpl {
             return Err(empty_request_field_error("chat_message.text"));
         }
 
-        let mut games = self.games.lock().unwrap();
-        let game = match games.get_game_by_player_id(&PlayerId::RealUser(String::from(
-            &request.get_ref().user_name,
-        ))) {
-            Some(game) => game,
-            None => return Err(Status::invalid_argument("User is not in a game.")),
+        let (users_to_update, game_view_or) = {
+            let mut games = self.games.lock().unwrap();
+            let game = match games.get_game_by_player_id(&PlayerId::RealUser(String::from(
+                &request.get_ref().user_name,
+            ))) {
+                Some(game) => game,
+                None => return Err(Status::invalid_argument("User is not in a game.")),
+            };
+            game.post_message(
+                &request.get_ref().user_name,
+                String::from(&chat_message.text),
+            )?;
+            (
+                game.get_user_names_for_all_real_players(),
+                match game.get_user_view(&request.get_ref().user_name) {
+                    Ok(game_view) => Ok(Response::new(game_view)),
+                    Err(err) => Err(err),
+                },
+            )
         };
-        game.post_message(
-            &request.get_ref().user_name,
-            String::from(&chat_message.text),
-        )?;
-        self.try_send_amqp_game_update_message_to_users_in_game(game);
-        match game.get_user_view(&request.get_ref().user_name) {
-            Ok(game_view) => Ok(Response::new(game_view)),
-            Err(err) => Err(err),
-        }
+        self.try_send_amqp_game_update_message_to_users(users_to_update)
+            .await;
+        game_view_or
     }
 
     async fn get_game_view(

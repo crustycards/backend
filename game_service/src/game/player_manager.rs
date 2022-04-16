@@ -278,12 +278,12 @@ impl PlayerManager {
             })
     }
 
-    pub fn get_user_names_for_all_real_players(&self) -> Vec<&str> {
-        let mut user_names: Vec<&str> = Vec::new();
+    pub fn get_user_names_for_all_real_players(&self) -> Vec<String> {
+        let mut user_names: Vec<String> = Vec::new();
         for player in &self.real_players {
             if let Some(Identifier::User(user)) = &player.identifier {
                 if !user.name.is_empty() {
-                    user_names.push(&user.name);
+                    user_names.push(user.name.clone());
                 }
             }
         }

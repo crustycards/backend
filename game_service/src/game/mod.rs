@@ -135,7 +135,7 @@ impl Game {
         self.last_activity_time = SystemTime::now();
     }
 
-    pub fn get_user_names_for_all_real_players(&self) -> Vec<&str> {
+    pub fn get_user_names_for_all_real_players(&self) -> Vec<String> {
         self.player_manager.get_user_names_for_all_real_players()
     }
 

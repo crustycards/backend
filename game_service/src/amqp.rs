@@ -9,29 +9,26 @@ pub struct MessageQueue {
 }
 
 impl MessageQueue {
-    pub fn new(amqp_uri: &str) -> MessageQueue {
-        let connection = Connection::connect(
-            amqp_uri,
-            ConnectionProperties::default().with_default_executor(4),
-        )
-        .wait()
-        .unwrap();
-        let channel = connection.create_channel().wait().unwrap();
+    pub async fn new(amqp_uri: &str) -> MessageQueue {
+        let connection = Connection::connect(amqp_uri, ConnectionProperties::default())
+            .await
+            .unwrap();
+        let channel = connection.create_channel().await.unwrap();
         channel
             .queue_declare(
                 GAME_QUEUE_NAME,
                 QueueDeclareOptions::default(),
                 FieldTable::default(),
             )
-            .wait()
+            .await
             .unwrap();
         MessageQueue { channel }
     }
 
-    fn construct_game_update_message(user_names: Vec<&str>) -> String {
+    fn construct_game_update_message(user_names: Vec<impl ToString>) -> String {
         let user_names_with_surrounding_quotes: Vec<String> = user_names
             .into_iter()
-            .map(|name| format!("\"{}\"", name))
+            .map(|name| format!("\"{}\"", name.to_string()))
             .collect();
         return format!(
             "{{\"type\": \"GAME_UPDATED\", \"payload\": [{}]}}",
@@ -39,9 +36,9 @@ impl MessageQueue {
         );
     }
 
-    pub fn game_updated_for_users(
+    pub async fn game_updated_for_users(
         &self,
-        user_names: Vec<&str>,
+        user_names: Vec<impl ToString>,
     ) -> Result<lapin::publisher_confirm::Confirmation, lapin::Error> {
         match self
             .channel
@@ -49,12 +46,12 @@ impl MessageQueue {
                 "",
                 GAME_QUEUE_NAME,
                 BasicPublishOptions::default(),
-                MessageQueue::construct_game_update_message(user_names).into_bytes(),
+                &MessageQueue::construct_game_update_message(user_names).into_bytes(),
                 BasicProperties::default(),
             )
-            .wait()
+            .await
         {
-            Ok(mut res) => match res.wait() {
+            Ok(res) => match res.await {
                 Ok(confirmation) => Ok(confirmation),
                 Err(err) => Err(err),
             },

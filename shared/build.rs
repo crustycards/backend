@@ -4,7 +4,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let _ = fs::create_dir("./src/proto");
     tonic_build::configure()
         .out_dir("./src/proto")
-        .format(true)
         .compile_well_known_types(true)
         .compile(
             &[
